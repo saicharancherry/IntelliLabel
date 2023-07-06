@@ -1,0 +1,15 @@
+# Node.js
+backend/node_modules/
+.env
+
+# Build output
+frontend/build/
+frontend/dist/
+frontend/node_modules
+
+# Editor and IDE files
+.vscode/
+.idea/
+
+# Miscellaneous
+.DS_Store
