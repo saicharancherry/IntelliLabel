@@ -1,0 +1,244 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set a background image with parallax scrolling effect */
+body {
+  background-image: url('/Users/saicharan/Downloads/AI2.jpeg'); /* Replace 'background.jpg' with your image file */
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Navigation bar styles */
+nav {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+nav li {
+  margin: 0 15px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #00c2ff;
+}
+
+/* Hero section styles */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.slider {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slider img {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px 0;
+  animation: slide 8s infinite;
+}
+
+@keyframes slide {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  10%, 30% {
+    transform: translateY(-20px);
+  }
+  40%, 60% {
+    transform: translateY(20px);
+  }
+  70%, 90% {
+    transform: translateY(-10px);
+  }
+}
+
+.hero-content {
+  width: 50%;
+  padding: 0 20px;
+  text-align: left;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #00c2ff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.cta-button:hover {
+  background: #0077a2;
+}
+
+/* Capabilities section styles */
+.capabilities {
+  display: flex;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 40px 0;
+}
+
+.capability {
+  width: 30%;
+  padding: 20px;
+  text-align: center;
+  border-right: 1px solid #fff;
+}
+
+.icon {
+  font-size: 2rem;
+  margin: 20px 0;
+}
+
+.capability h2 {
+  font-size: 1.5rem;
+  margin: 10px 0;
+}
+
+.capability p {
+  font-size: 1.1rem;
+}
+
+/* Elevation pitches section styles */
+.elevation-pitches {
+  display: flex;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 40px 0;
+}
+
+.elevation-pitch {
+  width: 30%;
+  padding: 20px;
+  text-align: center;
+}
+
+.elevation-pitch h3 {
+  font-size: 1.8rem;
+  margin: 20px 0;
+}
+
+.elevation-pitch p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .slider {
+    width: 100%;
+  }
+
+  .hero-content {
+    width: 100%;
+    text-align: center;
+  }
+
+  .capabilities, .elevation-pitches {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .capability {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #fff;
+  }
+
+  .elevation-pitch {
+    width: 100%;
+    border-bottom: 1px solid #fff;
+  }
+}
