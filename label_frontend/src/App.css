@@ -1,5 +1,5 @@
 .container {
-    background-color: #2c2c2c;
+    background-color: #000000;
     color: #f5f5f5;
     font-family: Arial, sans-serif;
     padding: 20px;
@@ -27,6 +27,9 @@
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
   
   .icon {
@@ -45,3 +48,20 @@
     border: none;
     cursor: pointer;
   }
+  
+
+  img {
+    max-width: 100%;
+  }
+  
+  .top-left-header {
+    background-color: #000000; /* Change this to your desired background color */
+    color: #fff; /* Change this to your desired text color */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px; /* Adjust padding as needed */
+    box-sizing: border-box;
+    z-index: 100; /* Adjust z-index to ensure it's above other content if necessary */
+}

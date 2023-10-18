@@ -1,7 +1,7 @@
 // HomePage.js
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion'
-
+import imageSrc from '../images/online.png'
 
 import React, { useState } from 'react';
 import '../App.css';
@@ -32,58 +32,32 @@ function HomePage() {
     setShowDropImages(true);
   };
 
+
+function Feature({ title }) {
+  return (
+    <div className="feature">
+      <div className="icon">
+      <img src={imageSrc} alt="icon" />
+      </div>
+      <p>{title}</p>
+    </div>
+  );
+}
+
   return (
     <div className="container">
-      <div className="image-grid">
-        {imageData.map((item) => (
-          <div className="image-item" key={item.id}>
-            <img src={item.src} alt={item.description} />
-            <div className="description">{item.description}</div>
-          </div>
-        ))}
+      <h1 className='top-left-header'>Intelli label</h1>
+      <div className="features">
+        <Feature title="Open source and free to use under GPLv3 license" />
+        <Feature title="No advanced installation required, just open in your browser" />
+        <Feature title="We don't store your images, because we don't send them anywhere" />
+        <Feature title="Support multiple label types: rects, points, polygons, and ellipses" />
+        <Feature title="Support output file formats like YOLO, VOC XML, VGG JSON, CSV" />
+        <Feature title="Use AI to make your work more productive" />
       </div>
-      {showDropImages && (
-        <div className={`drop-images-section ${showDropImages ? 'show' : ''}`}>
-          <div className="drop-images-box">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-            />
-            <button onClick={handleGetStarted}>Proceed</button>
-          </div>
-        </div>
-      )}
-      {!showDropImages && (
-        <button className="get-started-button" onClick={handleGetStarted}>Get Started</button>
-      )}
+      <button>Get Started!</button>
     </div>
   );
 }
 
 export default HomePage;
-
-
-// const HomePage = () => {
-//   return (
-//     <div className="home-page">
-//     <h1>IntelliLabel</h1>
-
-//         <motion.image 
-//             animate={{ x: [0, 0, 50], opacity: 1, scale: 1 }}
-//             transition={{
-//                 duration: 5,
-//                 delay: 0.3,
-//                 ease: [0.5, 0.71, 1, 1.5],
-//             }}
-//             initial={{ opacity: 0, scale: 0.5 }}
-//             whileHover={{ scale: 1.2 }}
-//         >
-//             Animation made easy with Framer Motion
-
-//         </motion.image>
-//     </div>
-//   );
-// };
-
-// export default HomePage;
