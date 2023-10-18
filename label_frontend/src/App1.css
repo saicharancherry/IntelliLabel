@@ -324,11 +324,12 @@ li:last-of-type {
 
 /* App.css */
 .container {
+  height: 96vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f0f0f0; /* Set the background color for the whole page */
 }
 
 .image-grid {
