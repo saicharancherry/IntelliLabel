@@ -1,7 +1,9 @@
 // HomePage.js
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion'
-import imageSrc from '../images/online.png'
+import openSource from '../images/open-source.png'
+import onlineSource from '../images/online.png'
+import privateSource from '../images/private.png'
 
 import React, { useState } from 'react';
 import '../App.css';
@@ -37,7 +39,7 @@ function Feature({ title }) {
   return (
     <div className="feature">
       <div className="icon">
-      <img src={imageSrc} alt="icon" />
+      <img src={onlineSource} alt="icon" />
       </div>
       <p>{title}</p>
     </div>
@@ -46,9 +48,9 @@ function Feature({ title }) {
 
   return (
     <div className="container">
-      <h1 className='top-left-header'>Intelli label</h1>
+      <h1 className='top-left-header'>Intelli Label</h1>
       <div className="features">
-        <Feature title="Open source and free to use under GPLv3 license" />
+        <Feature title="Open source and free to use under GPLv3 license" imgPath="" />
         <Feature title="No advanced installation required, just open in your browser" />
         <Feature title="We don't store your images, because we don't send them anywhere" />
         <Feature title="Support multiple label types: rects, points, polygons, and ellipses" />
