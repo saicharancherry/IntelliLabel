@@ -6,6 +6,7 @@ import './App.css';
 import HomePage from './components/HomePage';
 import DropImages from './components/DropImages';
 import NewProject from './components/NewProject';
+import ObjectAnnotation from './components/ObjectAnnotation';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/get-started' element={<DropImages/>}/>
           <Route path='/new-project' element={<NewProject/>}/>
+          <Route path='/object-annotatation' element={<ObjectAnnotation/>}/>
         </Routes>
       </BrowserRouter>
     </>
