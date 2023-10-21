@@ -1,59 +1,173 @@
-// import React, { useState, useEffect } from 'react';
-// import Annotation from 'react-image-annotation';
+import React, { useState } from 'react';
+import '../css/AnnotationTool.css'
 
-// function AnnotationUI() {
-//   const [images, setImages] = useState([]);
-//   const [selectedImage, setSelectedImage] = useState(null);
-//   const [annotations, setAnnotations] = useState([]);
-//   const [annotation, setAnnotation] = useState({});
+const ImageViewer = () => {
+    const initialLabels = ["car", "person", "laptop"]
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [startPoint, setStartPoint] = useState(null);
+    const [currentBox, setCurrentBox] = useState(null);
+    const [labels, setLabels] = useState(initialLabels);
 
-//   useEffect(() => {
-//     setImages(JSON.parse(localStorage.getItem("droppedImages")));
-//   }, []);
+    const [boxes, setBoxes] = useState([]);
+    const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
+    const [isLabeling, setIsLabeling] = useState(false);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
 
-//   const onChange = (annotation) => {
-//     setAnnotation(annotation);
-//   }
 
-//   const onSubmit = (annotation) => {
-//     setAnnotations([...annotations, annotation]);
-//     setAnnotation({});
-//   }
+    const handleLabelChange = (index, event) => {
+        const newLabels = [...labels];
+        newLabels[index] = event.target.value;
+        setLabels(newLabels);
+    };
 
-//   return (
-//     <div style={{ display: 'flex' }}>
-//       {/* Left Section */}
-//       <div style={{ flex: '1', borderRight: '1px solid #ccc', padding: '10px' }}>
-//         <h2>Stored Images</h2>
-//         {images.map((base64Image, index) => (
-//           <div key={index} style={{ marginBottom: '10px' }}>
-//             <img
-//               src={base64Image}
-//               alt={`Stored Image ${index + 1}`}
-//               style={{ maxWidth: '100%', height: 'auto', cursor: 'pointer' }}
-//               onClick={() => setSelectedImage(base64Image)}
-//             />
-//           </div>
-//         ))}
-//       </div>
 
-//       {/* Right Section */}
-//       <div style={{ flex: '3', padding: '10px' }}>
-//         {selectedImage ? (
-//           <Annotation
-//             src={selectedImage}
-//             annotations={annotations}
-//             type={Annotation.Rectangle}
-//             value={annotation}
-//             onChange={onChange}
-//             onSubmit={onSubmit}
-//           />
-//         ) : (
-//           <p>Select an image to annotate.</p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
+    const onBoxClick = (index) => {
+        setSelectedBoxIndex(index);
+        setDropdownVisible(true);
+        console.log("onboxclick :", index, boxes)
 
-// export default AnnotationUI;
+    };
+
+
+    const onMouseDown = (e) => {
+        setIsDrawing(true);
+        setStartPoint({ x: e.clientX, y: e.clientY });
+    };
+
+    const onMouseMove = (e) => {
+        if (isDrawing) {
+            const box = {
+                top: Math.min(startPoint.y, e.clientY),
+                left: Math.min(startPoint.x, e.clientX),
+                width: Math.abs(startPoint.x - e.clientX),
+                height: Math.abs(startPoint.y - e.clientY),
+                label: "label"
+            };
+            setCurrentBox(box);
+        }
+    };
+
+    const onMouseUp = () => {
+        if (isDrawing) {
+            console.log("onMouseUp ::: ", currentBox)
+            if (currentBox)
+                setBoxes([...boxes, currentBox]);
+            setIsDrawing(false);
+            setCurrentBox(null);
+            setStartPoint(null);
+        }
+    };
+
+    const handleAddLabel = () => {
+        setLabels([...labels, '']);
+      };
+    
+      const handleChange = (index, value) => {
+        const newLabels = [...labels];
+        newLabels[index] = value;
+        setLabels(newLabels);
+      };
+    
+      const handleSave = () => {
+        setLabels(labels);
+      };
+
+      
+    return (
+        <div className='annotation-editor'>
+            <div className="image-viewer">
+                <div onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+                    <img src="https://www.naturespicsonline.com/system/carousel_image/file/194/1.jpg" alt="Selected" draggable="false" />
+                    {currentBox && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                border: '2px solid white',
+                                ...currentBox,
+                            }}
+                        >{currentBox.label}</div>
+                    )}
+                    {dropdownVisible && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: dropdownPosition.y + 'px',
+                                left: dropdownPosition.x + 'px',
+                                zIndex: 1000, // Ensuring it appears above other elements
+                                backgroundColor: 'white',
+                                border: '1px solid black',
+                                boxShadow: '0px 0px 10px rgba(0,0,0,0.1)'
+                            }}>
+                            {labels.map((label, idx) => (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        padding: '8px 16px',
+                                        cursor: 'pointer',
+                                    }}
+                                    onClick={() => {
+                                        // Clone the boxes array
+                                        const updatedBoxes = [...boxes];
+                                        if (updatedBoxes[selectedBoxIndex]) {
+                                            updatedBoxes[selectedBoxIndex].label = label;
+                                            setBoxes(updatedBoxes);
+                                            setDropdownVisible(false);
+                                        } else {
+                                            console.error(`No bounding box found at index ${selectedBoxIndex}`, boxes);
+                                        }
+                                    }}
+
+                                >
+                                    {label}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {boxes.map((box, index) => (
+                        <div
+                            key={index}
+                            onClick={() => onBoxClick(index)}
+                            style={{
+                                position: 'absolute',
+                                border: '2px solid white',
+                                ...box,
+                            }}
+                        >{box && box.label || "label......"}</div>
+                    ))}
+                </div>
+            </div>
+            {/* <div className="label-editor">
+                <h2>Edit Labels</h2>
+                {labels.map((label, index) => (
+                    <input
+                        key={index}
+                        type="text"
+                        value={label}
+                        onChange={(event) => handleLabelChange(index, event)}
+                    />
+                ))}
+            </div> */}
+            <div className="label-editor">
+                <h2>Edit labels</h2>
+                <p>You can now edit the label names...</p>
+                {labels.map((label, index) => (
+                    <input
+                        key={index}
+                        value={label}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                        placeholder="Insert label"
+                    />
+                ))}
+                <button onClick={handleAddLabel}>+</button>
+                {/* <div>
+                    <button onClick={handleSave}>Accept</button>
+                    <button>Cancel</button>
+                </div> */}
+            </div>
+        </div>
+    );
+};
+
+export default ImageViewer;

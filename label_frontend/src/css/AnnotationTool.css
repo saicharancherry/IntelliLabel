@@ -1,0 +1,91 @@
+.annotation-tool {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.image-container {
+    position: relative;
+    width: 70%;
+}
+
+.tools {
+    width: 15%;
+}
+
+.labels {
+    width: 15%;
+}
+
+.bounding-box {
+    border: 2px solid yellow;
+    position: absolute;
+}
+
+.objectcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* This will vertically center the image if needed */
+    height: 100vh;
+    /* Full viewport height */
+}
+
+
+/* Frame styles */
+.image-viewer {
+    width: 935px;
+    /* Set to desired width */
+    height: 830px;
+    /* Set to desired height */
+    border: 1px solid #000;
+    /* Optional border */
+    overflow: hidden;
+    /* Hide any part of the image that exceeds the frame size */
+    display: flex;
+    /* To center the image both horizontally and vertically */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Image styles */
+.image-viewer img {
+    max-width: 100%;
+    /* Ensure the image does not exceed the frame width */
+    max-height: 100%;
+    /* Ensure the image does not exceed the frame height */
+    display: block;
+    /* Remove any space below the image */
+}
+
+.right-section {
+    background-color: aqua;
+    width: 40%;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1px;
+}
+
+/* LabelEditor.css */
+.label-editor {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    /* Adjust width as needed */
+    height: 100vh;
+    background: black;
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.label-editor input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+}
