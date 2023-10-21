@@ -92,8 +92,8 @@ const ImageViewer = () => {
                         <div
                             style={{
                                 position: 'absolute',
-                                top: dropdownPosition.y + 'px',
-                                left: dropdownPosition.x + 'px',
+                                top: boxes[selectedBoxIndex].top + 'px',
+                                left: boxes[selectedBoxIndex].left + 'px',
                                 zIndex: 1000, // Ensuring it appears above other elements
                                 backgroundColor: 'white',
                                 border: '1px solid black',
