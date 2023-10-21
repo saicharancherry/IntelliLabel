@@ -36,7 +36,7 @@
 .image-viewer {
     width: 1150px;
     /* Set to desired width */
-    height: 830px;
+    height: 900px;
     /* Set to desired height */
     border: 1px solid #000;
     /* Optional border */
@@ -46,6 +46,7 @@
     /* To center the image both horizontally and vertically */
     justify-content: center;
     align-items: center;
+    background-color: #000;
 }
 
 /* Image styles */
@@ -88,4 +89,16 @@
     width: 100%;
     margin-bottom: 10px;
     padding: 10px;
+}
+
+.label-display {
+    position: absolute;
+    /* bottom: 5px;
+    left: 5px; */
+    color: white;
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 3px;
+    background-color: rgb(0, 0, 0);
 }

@@ -10,7 +10,6 @@ import ImageViewer from './components/ObjectAnnotation';
 
 function App() {
   return (
-
     <>
       <BrowserRouter>
         <Routes>

@@ -86,7 +86,7 @@ const ImageViewer = () => {
                                 border: '2px solid white',
                                 ...currentBox,
                             }}
-                        >{currentBox.label}</div>
+                        ><div className="go-back">{currentBox.label}</div></div>
                     )}
                     {dropdownVisible && (
                         <div
@@ -104,7 +104,7 @@ const ImageViewer = () => {
                                     key={idx}
                                     style={{
                                         padding: '8px 16px',
-                                        cursor: 'pointer',
+                                        cursor: 'pointer'
                                     }}
                                     onClick={() => {
                                         // Clone the boxes array
@@ -134,7 +134,7 @@ const ImageViewer = () => {
                                 border: '2px solid white',
                                 ...box,
                             }}
-                        >{box && box.label || "label......"}</div>
+                        ><div className="label-display">{box && box.label || "label......"}</div></div>
                     ))}
                 </div>
             </div>
@@ -150,8 +150,8 @@ const ImageViewer = () => {
                 ))}
             </div> */}
             <div className="label-editor">
-                <h2>Edit labels</h2>
-                <p>You can now edit the label names...</p>
+                <h2>labels</h2>
+                {/* <p>You can now edit the label names...</p> */}
                 {labels.map((label, index) => (
                     <input
                         key={index}
@@ -161,6 +161,8 @@ const ImageViewer = () => {
                     />
                 ))}
                 <button onClick={handleAddLabel}>+</button>
+                <button> Train </button>
+
                 {/* <div>
                     <button onClick={handleSave}>Accept</button>
                     <button>Cancel</button>
