@@ -1,0 +1,22 @@
+.left-section {
+    flex: 0.2;
+    background-color: black;
+    color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+.gallery {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+
+  }
+  
+  .gallery-image {
+    margin-bottom: 10px;
+  }
+  

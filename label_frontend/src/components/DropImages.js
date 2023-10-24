@@ -35,7 +35,7 @@ function App() {
   };
 
   const objectDetection = () => {
-    navigate('/object-annotation')
+    navigate('/gallery-page')
   }
 
   return (
