@@ -1,10 +1,13 @@
 import React from 'react';
 import '../css/Gallery.css';
 // import '../App.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
 function Gallery() {
+  const navigate = useNavigate();
   // const images = [
   //   'https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8=',
   //   'https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?cs=srgb&dl=pexels-pixabay-268533.jpg&fm=jpg',
@@ -21,10 +24,16 @@ function Gallery() {
   }, []);
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image, index) => {
     setSelectedImage(image);
+    setSelectedImageIndex(index)
   };
+
+  const openAnnotationPage = () => {
+    navigate(`/object-annotation/${selectedImageIndex}`)
+  }
 
   return (
     <div className="container">
@@ -43,13 +52,13 @@ function Gallery() {
               src={image}
               alt={`Image ${index}`}
               className="gallery-image"
-              onClick={() => handleImageClick(image)}
+              onClick={() => handleImageClick(image, index)}
             />
           ))}
         </div>
         {selectedImage && (
           <div className="selected-image">
-            <img src={selectedImage} alt="Selected Image" />
+            <img src={selectedImage} onClick={openAnnotationPage} alt="Selected Image" />
           </div>
         )}
       </div>

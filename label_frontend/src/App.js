@@ -17,8 +17,8 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/get-started' element={<DropImages/>}/>
           <Route path='/new-project' element={<NewProject/>}/>
-          <Route path='/object-annotation' element={<ImageViewer/>}/>
-          <Route path='/object-annotatation' element={<ObjectAnnotation/>}/>
+          {/* <Route path='/object-annotation' element={<ImageViewer/>}/> */}
+          <Route path='/object-annotation/:imageIndex' element={<ObjectAnnotation/>}/>
           <Route path='/gallery-page' element={<GalleryPage/>}/>
         </Routes>
       </BrowserRouter>

@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/AnnotationTool.css'
 
+import { Navigate, useParams } from 'react-router-dom';
+
 const ImageViewer = () => {
+    const { imageIndex } = useParams() || {};
     const initialLabels = ["car", "person", "laptop"]
     const [isDrawing, setIsDrawing] = useState(false);
     const [startPoint, setStartPoint] = useState(null);
@@ -10,17 +13,16 @@ const ImageViewer = () => {
 
     const [boxes, setBoxes] = useState([]);
     const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
-    const [isLabeling, setIsLabeling] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
 
+    // const [droppedImages, setDroppedImages] = useState([]);
+    const [selectedImage, setSelectedImage] = useState([]);
 
-    const handleLabelChange = (index, event) => {
-        const newLabels = [...labels];
-        newLabels[index] = event.target.value;
-        setLabels(newLabels);
-    };
-
+    useEffect(() => {
+      const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
+    //   setDroppedImages(droppedImages);
+      setSelectedImage(droppedImages[imageIndex])
+    }, []);
 
     const onBoxClick = (index) => {
         setSelectedBoxIndex(index);
@@ -28,7 +30,6 @@ const ImageViewer = () => {
         console.log("onboxclick :", index, boxes)
 
     };
-
 
     const onMouseDown = (e) => {
         setIsDrawing(true);
@@ -68,17 +69,12 @@ const ImageViewer = () => {
         newLabels[index] = value;
         setLabels(newLabels);
       };
-    
-      const handleSave = () => {
-        setLabels(labels);
-      };
-
       
     return (
         <div className='annotation-editor'>
-            <div className="image-viewer">
+            { selectedImage && (<div className="image-viewer">
                 <div onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-                    <img src="https://www.naturespicsonline.com/system/carousel_image/file/194/1.jpg" alt="Selected" draggable="false" />
+                    <img src={selectedImage} alt="Selected" draggable="false" />
                     {currentBox && (
                         <div
                             style={{
@@ -137,18 +133,7 @@ const ImageViewer = () => {
                         ><div className="label-display">{box && box.label || "label......"}</div></div>
                     ))}
                 </div>
-            </div>
-            {/* <div className="label-editor">
-                <h2>Edit Labels</h2>
-                {labels.map((label, index) => (
-                    <input
-                        key={index}
-                        type="text"
-                        value={label}
-                        onChange={(event) => handleLabelChange(index, event)}
-                    />
-                ))}
-            </div> */}
+            </div>)}
             <div className="label-editor">
                 <h2>labels</h2>
                 {/* <p>You can now edit the label names...</p> */}
