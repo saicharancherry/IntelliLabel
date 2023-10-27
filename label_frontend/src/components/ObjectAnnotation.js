@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/AnnotationTool.css'
 
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const ImageViewer = () => {
     const { imageIndex } = useParams() || {};
@@ -15,12 +15,10 @@ const ImageViewer = () => {
     const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
-    // const [droppedImages, setDroppedImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState([]);
 
     useEffect(() => {
       const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
-    //   setDroppedImages(droppedImages);
       setSelectedImage(droppedImages[imageIndex])
     }, []);
 
@@ -28,7 +26,6 @@ const ImageViewer = () => {
         setSelectedBoxIndex(index);
         setDropdownVisible(true);
         console.log("onboxclick :", index, boxes)
-
     };
 
     const onMouseDown = (e) => {
@@ -130,7 +127,9 @@ const ImageViewer = () => {
                                 border: '2px solid white',
                                 ...box,
                             }}
-                        ><div className="label-display">{box && box.label || "label......"}</div></div>
+                        >
+                            <div className="label-display">{box && box.label || "label......"}</div>
+                            </div>
                     ))}
                 </div>
             </div>)}
