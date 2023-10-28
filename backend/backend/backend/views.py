@@ -121,6 +121,7 @@ def detect_objects(request):
         annotated_image = detector.detect_objects_in_image(img)
         if annotated_image is None or annotated_image.size == 0:
             print("T$$$$$$$$!@@ he image is empty!", annotated_image)
+            response_data.append(img_base64)
         else:            
             print("The image is not empty!", annotated_image)
             _, buffer = cv2.imencode('.jpg', annotated_image)
