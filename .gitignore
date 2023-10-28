@@ -1,6 +1,9 @@
 # Node.js
-backend/
 .env
+backend/lib
+backend/bin
+backend/share
+runs/
 
 # Build output
 frontend/build/

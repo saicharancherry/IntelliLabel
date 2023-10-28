@@ -17,10 +17,35 @@ function Gallery() {
 
   const [uploadedImages, setUploadedImages] = useState([]);
 
+
   useEffect(() => {
     // Retrieve uploaded images from local storage
-    const uploadedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
-    setUploadedImages(uploadedImages);
+    const storedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
+    setUploadedImages(storedImages);
+
+    // Send stored images to the API for detection
+    fetch('http://127.0.0.1:8000/detect/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        images: storedImages
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const annotatedImages = data.annotated_images;
+        console.log("99999iiii ", annotatedImages)
+        setUploadedImages(annotatedImages);
+
+        // Store the annotated images back in local storage
+        localStorage.setItem('droppedImages', JSON.stringify(annotatedImages));
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
   }, []);
 
   const [selectedImage, setSelectedImage] = useState(null);
