@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+const IMAGES_KEY = 'droppedImages';
 
 function Gallery() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function Gallery() {
 
   useEffect(() => {
     // Retrieve uploaded images from local storage
-    const storedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
+    const storedImages = JSON.parse(localStorage.getItem(IMAGES_KEY) || '[]');
     setUploadedImages(storedImages);
 
     // Send stored images to the API for detection

@@ -76,7 +76,7 @@ const ImageViewer = () => {
                         <div
                             style={{
                                 position: 'absolute',
-                                border: '2px solid white',
+                                border: '3px solid blue',
                                 ...currentBox,
                             }}
                         ><div className="go-back">{currentBox.label}</div></div>
@@ -124,7 +124,7 @@ const ImageViewer = () => {
                             onClick={() => onBoxClick(index)}
                             style={{
                                 position: 'absolute',
-                                border: '2px solid white',
+                                border: '3px solid blue',
                                 ...box,
                             }}
                         >
