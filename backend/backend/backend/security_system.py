@@ -7,32 +7,20 @@ from ultralytics import YOLO
 import supervision as sv
 
 
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-
-from email_settings import password, from_email, to_email
+# import smtplib
+# from email.mime.multipart import MIMEMultipart
+# from email.mime.text import MIMEText
 
     
-    
-# create server
-server = smtplib.SMTP('smtp.gmail.com: 587')
-
-server.starttls()
-
-# Login Credentials for sending the mail
-server.login(from_email, password)
-
-    
-def send_email(to_email, from_email, people_detected=1):
+# def send_email(to_email, from_email, people_detected=1):
  
-    message = MIMEMultipart()
-    message['From'] = from_email
-    message['To'] = to_email
-    message['Subject'] = "Security Alert"
-    # add in the message body
-    message.attach(MIMEText(f'ALERT - {people_detected} persons has been detected!!', 'plain'))
-    server.sendmail(from_email, to_email, message.as_string())
+#     message = MIMEMultipart()
+#     message['From'] = from_email
+#     message['To'] = to_email
+#     message['Subject'] = "Security Alert"
+#     # add in the message body
+#     message.attach(MIMEText(f'ALERT - {people_detected} persons has been detected!!', 'plain'))
+#     server.sendmail(from_email, to_email, message.as_string())
 
     
 

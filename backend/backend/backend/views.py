@@ -67,7 +67,26 @@ class ObjectDetection:
         return frame, class_ids
     
     
-    
+    # @api_view(['POST'])
+    # def upload_image(request):
+    #     # Check if a file is present in the request
+    #     if 'file' not in request.files:
+    #         return jsonify({'message': 'No file part'}), 400
+
+    #     file = request.files['file']
+
+    #     # If the user does not select a file, the browser submits an
+    #     # empty file without a filename.
+    #     if file.filename == '':
+    #         return jsonify({'message': 'No selected file'}), 400
+
+    #     if file:
+    #         # Save the file to the server's filesystem
+    #         filename = secure_filename(file.filename)
+    #         file.save(os.path.join('/path/to/save', filename))
+    #         return jsonify({'message': 'File successfully saved'}), 200
+
+
     # def __call__(self):
     #     print("@@@@@@@@@@@@8888 __call__")
     #     cap = cv2.VideoCapture(self.capture_index)
