@@ -57,6 +57,12 @@ const ImageViewer = () => {
         }
     };
 
+    const saveLabelsAndImages = () => {
+        //Api to save boxes and images in the backend
+        console.log("@@@@@@@boxes :", boxes)
+
+    }
+
     const handleAddLabel = () => {
         setLabels([...labels, '']);
       };
@@ -145,7 +151,7 @@ const ImageViewer = () => {
                     />
                 ))}
                 <button onClick={handleAddLabel}>+</button>
-                <button> Train </button>
+                <button onClick={saveLabelsAndImages}> save </button>
 
                 {/* <div>
                     <button onClick={handleSave}>Accept</button>
