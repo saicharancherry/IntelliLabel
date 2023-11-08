@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../css/AnnotationTool.css'
 
 import { useParams } from 'react-router-dom';
@@ -10,12 +10,20 @@ const ImageViewer = () => {
     const [startPoint, setStartPoint] = useState(null);
     const [currentBox, setCurrentBox] = useState(null);
     const [labels, setLabels] = useState(initialLabels);
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
     const [boxes, setBoxes] = useState([]);
     const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
     const [selectedImage, setSelectedImage] = useState([]);
+
+    const onImgLoad = ({ target: img }) => {
+        setDimensions({
+          width: img.offsetWidth,
+          height: img.offsetHeight
+        });
+      };
 
     useEffect(() => {
       const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
@@ -38,8 +46,11 @@ const ImageViewer = () => {
             const box = {
                 top: Math.min(startPoint.y, e.clientY),
                 left: Math.min(startPoint.x, e.clientX),
+
                 width: Math.abs(startPoint.x - e.clientX),
                 height: Math.abs(startPoint.y - e.clientY),
+                x: Math.min(startPoint.x, e.clientX),
+                y: Math.min(startPoint.y, e.clientY),
                 label: "label"
             };
             setCurrentBox(box);
@@ -59,7 +70,7 @@ const ImageViewer = () => {
 
     const saveLabelsAndImages = () => {
         //Api to save boxes and images in the backend
-        console.log("@@@@@@@boxes :", boxes)
+        console.log("@@@@@@@boxes :", boxes, dimensions)
 
     }
 
@@ -77,7 +88,7 @@ const ImageViewer = () => {
         <div className='annotation-editor'>
             { selectedImage && (<div className="image-viewer">
                 <div onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-                    <img src={selectedImage} alt="Selected" draggable="false" />
+                    <img src={selectedImage} onLoad={onImgLoad} alt="Selected" draggable="false" />
                     {currentBox && (
                         <div
                             style={{
