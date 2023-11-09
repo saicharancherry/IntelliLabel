@@ -13,21 +13,28 @@ const ImageViewer = () => {
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
     const [boxes, setBoxes] = useState([]);
+    const [yoloBoxes, setYoloBoxes] = useState([]);
     const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
 
     const [selectedImage, setSelectedImage] = useState([]);
+    const [imageDimensions, setImageDimensions] = useState([])
 
     const onImgLoad = ({ target: img }) => {
-        setDimensions({
-          width: img.offsetWidth,
-          height: img.offsetHeight
-        });
-      };
+        const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
+
+        // You now have the image's coordinates relative to its parent, and its size
+        console.log(`Image Position - x: ${offsetLeft}, y: ${offsetTop}`);
+        console.log(`Image Size - width: ${clientWidth}px, height: ${clientHeight}px`);
+
+        // If you need the image's natural size:
+        console.log(`Natural Size - width: ${img.naturalWidth}px, height: ${img.naturalHeight}px`);
+        setImageDimensions({offsetLeft, offsetTop, clientWidth, clientHeight })
+    };
 
     useEffect(() => {
-      const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
-      setSelectedImage(droppedImages[imageIndex])
+        const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
+        setSelectedImage(droppedImages[imageIndex])
     }, []);
 
     const onBoxClick = (index) => {
@@ -46,11 +53,8 @@ const ImageViewer = () => {
             const box = {
                 top: Math.min(startPoint.y, e.clientY),
                 left: Math.min(startPoint.x, e.clientX),
-
                 width: Math.abs(startPoint.x - e.clientX),
                 height: Math.abs(startPoint.y - e.clientY),
-                x: Math.min(startPoint.x, e.clientX),
-                y: Math.min(startPoint.y, e.clientY),
                 label: "label"
             };
             setCurrentBox(box);
@@ -59,9 +63,22 @@ const ImageViewer = () => {
 
     const onMouseUp = () => {
         if (isDrawing) {
+            let { offsetLeft, offsetTop, clientWidth, clientHeight } = imageDimensions;
+
             console.log("onMouseUp ::: ", currentBox)
-            if (currentBox)
+            if (currentBox) {
                 setBoxes([...boxes, currentBox]);
+                let currentYoloBox = {
+                    x : Math.abs(currentBox.left - offsetLeft)/clientWidth * 100,
+                    y : Math.abs(currentBox.top - offsetTop)/ clientHeight * 100,
+                    width: currentBox.width/clientWidth * 100,
+                    height: currentBox.height/clientHeight * 100,
+                }
+                console.log("offsetLeft, offsetTop, clientWidth, clientHeight ", offsetLeft, offsetTop, clientWidth, clientHeight)
+                console.log("currentYoloBox : ", currentYoloBox)
+                console.log("currebtBox : ", currentBox)
+                setYoloBoxes([...yoloBoxes, currentYoloBox])
+            }
             setIsDrawing(false);
             setCurrentBox(null);
             setStartPoint(null);
@@ -70,23 +87,23 @@ const ImageViewer = () => {
 
     const saveLabelsAndImages = () => {
         //Api to save boxes and images in the backend
-        console.log("@@@@@@@boxes :", boxes, dimensions)
+        console.log("@@@@@@@yoloBoxes :", yoloBoxes)
 
     }
 
     const handleAddLabel = () => {
         setLabels([...labels, '']);
-      };
-    
-      const handleChange = (index, value) => {
+    };
+
+    const handleChange = (index, value) => {
         const newLabels = [...labels];
         newLabels[index] = value;
         setLabels(newLabels);
-      };
-      
+    };
+
     return (
         <div className='annotation-editor'>
-            { selectedImage && (<div className="image-viewer">
+            {selectedImage && (<div className="image-viewer">
                 <div onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
                     <img src={selectedImage} onLoad={onImgLoad} alt="Selected" draggable="false" />
                     {currentBox && (
@@ -146,7 +163,7 @@ const ImageViewer = () => {
                             }}
                         >
                             <div className="label-display">{box && box.label || "label......"}</div>
-                            </div>
+                        </div>
                     ))}
                 </div>
             </div>)}
