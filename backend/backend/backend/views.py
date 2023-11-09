@@ -40,10 +40,8 @@ class ObjectDetection:
     
 
     def load_model(self):
-       
         model = YOLO("yolov8n.pt")  # load a pretrained YOLOv8n model
         model.fuse()
-    
         return model
 
 
@@ -57,10 +55,11 @@ class ObjectDetection:
     def plot_bboxes(self, results, frame):
         class_ids = []
         labels = list(results[0].names.values())
-        print("$*******() results : ", labels)
     
         detections = sv.Detections.from_ultralytics(results[0])
         #TO-DO how to handle future list of labels 
+        print("$*******() results : ", labels, detections)
+
         frame = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
         
         
@@ -127,6 +126,7 @@ class ObjectDetection:
     #             break
     
     def detect_objects_in_image(self, image):
+        # self.model = self.load_model()
         results = self.predict(image)
         annotated_image, _ = self.plot_bboxes(results, image)
         return annotated_image
