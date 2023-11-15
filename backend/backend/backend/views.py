@@ -54,76 +54,10 @@ class ObjectDetection:
 
     def plot_bboxes(self, results, frame):
         class_ids = []
-        labels = list(results[0].names.values())
-    
+        labels = list(results[0].names.values()) 
         detections = sv.Detections.from_ultralytics(results[0])
-        #TO-DO how to handle future list of labels 
-        print("$*******() results : ", labels, detections)
-
         frame = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
-        
-        
         return frame, class_ids
-    
-    
-    # @api_view(['POST'])
-    # def upload_image(request):
-    #     # Check if a file is present in the request
-    #     if 'file' not in request.files:
-    #         return jsonify({'message': 'No file part'}), 400
-
-    #     file = request.files['file']
-
-    #     # If the user does not select a file, the browser submits an
-    #     # empty file without a filename.
-    #     if file.filename == '':
-    #         return jsonify({'message': 'No selected file'}), 400
-
-    #     if file:
-    #         # Save the file to the server's filesystem
-    #         filename = secure_filename(file.filename)
-    #         file.save(os.path.join('/path/to/save', filename))
-    #         return jsonify({'message': 'File successfully saved'}), 200
-
-
-    # def __call__(self):
-    #     print("@@@@@@@@@@@@8888 __call__")
-    #     cap = cv2.VideoCapture(self.capture_index)
-    #     assert cap.isOpened()
-    #     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    #     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        
-    #     frame_count = 0
-      
-    #     while True:
-          
-    #         start_time = time()
-            
-    #         ret, frame = cap.read()
-    #         assert ret
-            
-    #         results = self.predict(frame)
-    #         frame, class_ids = self.plot_bboxes(results, frame)
-            
-    #         if len(class_ids) > 0:
-    #             if not self.email_sent:  # Only send email if it hasn't been sent for the current detection
-    #                 # send_email(to_email, from_email, len(class_ids))
-    #                 self.email_sent = True  # Set the flag to True after sending the email
-    #         else:
-    #             self.email_sent = False  # Reset the flag when no person is detected
-
-            
-    #         end_time = time()
-    #         fps = 1/np.round(end_time - start_time, 2)
-             
-    #         cv2.putText(frame, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
-            
-    #         cv2.imshow('YOLOv8 Detection', frame)
-            
-    #         frame_count += 1
- 
-    #         if cv2.waitKey(5) & 0xFF == 27:
-    #             break
     
     def detect_objects_in_image(self, image):
         # self.model = self.load_model()
