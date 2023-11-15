@@ -66,12 +66,12 @@ const VideoWebSocket = () => {
     }, []);
 
     return (
-        <div>
-            <h2>Video WebSocket</h2>
+        <div style={{ backgroundColor: 'black', height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <h2 style={{ color: 'white', position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)' }}>Video WebSocket</h2>
             {error && <div style={{ color: 'red' }}>{error}</div>}
             <video ref={videoRef} style={{ display: 'none' }}></video>
-            <canvas ref={canvasRef} style={{ display: 'none' }} width="640" height="480">{receivedImage && <img src={receivedImage} alt="Received Frame" />}</canvas>
-            {receivedImage && <img src={receivedImage} alt="Received Frame" />}
+            <canvas ref={canvasRef} style={{ display: 'none' }} width="1500" height="1000"></canvas>
+            {receivedImage && <img style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain' }} src={receivedImage} alt="Received Frame" />}
         </div>
     );
 };
