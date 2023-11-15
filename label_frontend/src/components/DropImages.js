@@ -77,6 +77,10 @@ function DropImages() {
     navigate('/gallery-page')
   }
 
+  const videoStreamDetection = () => {
+    navigate('/videostream')
+  }
+
   return (
     <div className="container">
       <h1>INTELLI LABEL</h1>
@@ -97,6 +101,7 @@ function DropImages() {
 
       </div>
       <button onClick={objectDetection}>OBJECT DETECTION</button>
+      <button onClick={videoStreamDetection}>VIDEO STREAM DETECTION</button>
       <div className="go-back" onClick={goBack}> Go Back </div>
 
     </div>
