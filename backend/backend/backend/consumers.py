@@ -74,7 +74,6 @@ class VideoFrameConsumer(AsyncWebsocketConsumer):
         img_base64 = text_data
         # Process video frame here
         # For example, you can decode the frame and apply image processing
-        print("@@@@ img_base64 :", img_base64)
         base64_str = img_base64.split(",")[1]
         img_bytes = base64.b64decode(base64_str)
         img_arr = np.frombuffer(img_bytes, np.uint8)
