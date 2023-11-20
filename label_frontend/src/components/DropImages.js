@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
 import '../css/DropImages.css';
 import openBox from '../images/box-opened.png'
@@ -14,6 +15,22 @@ function DropImages() {
   }, [])
 
   const onDrop = useCallback((acceptedFiles) => {
+    const formData = new FormData();
+    acceptedFiles.forEach(file => {
+        formData.append('image', file);
+    });
+
+    axios.post('http://localhost:8000/upload/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+        console.log('Image uploaded successfully', response);
+    })
+    .catch(error => {
+        console.error('Error uploading image', error);
+    });
     acceptedFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = () => {

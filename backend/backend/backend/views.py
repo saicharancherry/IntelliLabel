@@ -9,7 +9,8 @@ from rest_framework.parsers import JSONParser
 import torch
 import numpy as np
 import base64
-
+from django.http import JsonResponse
+from .models import Image
 
 # ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter',
 #  'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 
@@ -65,6 +66,14 @@ class ObjectDetection:
         annotated_image, _ = self.plot_bboxes(results, image)
         return annotated_image
 
+@api_view(['POST'])
+def upload_image(request):
+    if request.FILES['image']:
+        image_file = request.FILES['image']
+        new_image = Image(image=image_file)
+        new_image.save()
+        return JsonResponse({'status': 'success', 'url': new_image.image.url})
+    return JsonResponse({'status': 'error'})
 
 @api_view(['POST'])
 def detect_objects(request):
