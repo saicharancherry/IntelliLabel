@@ -10,7 +10,7 @@ import torch
 import numpy as np
 import base64
 from django.http import JsonResponse
-from .models import Image
+from .models import Image, Labels
 
 # ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter',
 #  'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 
@@ -79,25 +79,29 @@ def upload_image(request):
 def detect_objects(request):
     data = JSONParser().parse(request)
     images_base64 = data.get('images', [])
-    # print("@@@@@@@@@@@@@@$$$$$$$$$$$$$$$$", images_base64)
-
     detector = ObjectDetection(capture_index=0)
-    
     response_data = []
-    
     for img_base64 in images_base64:
         base64_str = img_base64.split(",")[1]
         img_bytes = base64.b64decode(base64_str)
         img_arr = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
-        # print("z%^^^^^^^^^^^^^^^^", image)
         annotated_image = detector.detect_objects_in_image(img)
         if annotated_image is None or annotated_image.size == 0:
-            print("T$$$$$$$$!@@ he image is empty!", annotated_image)
             response_data.append(img_base64)
         else:            
-            print("The image is not empty!", annotated_image)
             _, buffer = cv2.imencode('.jpg', annotated_image)
             response_data.append("data:image/png;base64," + base64.b64encode(buffer).decode('utf-8'))
 
     return JsonResponse({"annotated_images": response_data})
+
+
+@api_view(['POST'])
+def create_label(request):
+    label = Labels(name='charan')  # Replace 'Your Label Name' with the actual label name
+    label.save()
+    labels = Labels.objects.all()
+    for label in labels:
+        print(label.name)
+    
+
