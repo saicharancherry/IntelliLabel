@@ -61,7 +61,6 @@ class ObjectDetection:
         return frame, class_ids
     
     def detect_objects_in_image(self, image):
-        # self.model = self.load_model()
         results = self.predict(image)
         annotated_image, _ = self.plot_bboxes(results, image)
         return annotated_image
@@ -103,5 +102,6 @@ def create_label(request):
     labels = Labels.objects.all()
     for label in labels:
         print(label.name)
+    # search:labels = Labels.objects.all().filter(name__icontains="name")
     
 
