@@ -22,14 +22,7 @@ const ImageViewer = () => {
 
     const onImgLoad = ({ target: img }) => {
         const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
-
-        // You now have the image's coordinates relative to its parent, and its size
-        console.log(`Image Position - x: ${offsetLeft}, y: ${offsetTop}`);
-        console.log(`Image Size - width: ${clientWidth}px, height: ${clientHeight}px`);
-
-        // If you need the image's natural size:
-        console.log(`Natural Size - width: ${img.naturalWidth}px, height: ${img.naturalHeight}px`);
-        setImageDimensions({offsetLeft, offsetTop, clientWidth, clientHeight })
+        setImageDimensions({image_position_x: offsetLeft, image_position_y: offsetTop, image_width: clientWidth, image_height: clientHeight })
     };
 
     useEffect(() => {
@@ -63,21 +56,21 @@ const ImageViewer = () => {
 
     const onMouseUp = () => {
         if (isDrawing) {
-            let { offsetLeft, offsetTop, clientWidth, clientHeight } = imageDimensions;
+            // let { offsetLeft, offsetTop, clientWidth, clientHeight } = imageDimensions;
 
             console.log("onMouseUp ::: ", currentBox)
             if (currentBox) {
                 setBoxes([...boxes, currentBox]);
-                let currentYoloBox = {
-                    x : Math.abs(currentBox.left - offsetLeft)/clientWidth * 100,
-                    y : Math.abs(currentBox.top - offsetTop)/ clientHeight * 100,
-                    width: currentBox.width/clientWidth * 100,
-                    height: currentBox.height/clientHeight * 100,
-                }
-                console.log("offsetLeft, offsetTop, clientWidth, clientHeight ", offsetLeft, offsetTop, clientWidth, clientHeight)
-                console.log("currentYoloBox : ", currentYoloBox)
-                console.log("currebtBox : ", currentBox)
-                setYoloBoxes([...yoloBoxes, currentYoloBox])
+                // let currentYoloBox = {
+                //     x : Math.abs(currentBox.left - offsetLeft)/clientWidth * 100,
+                //     y : Math.abs(currentBox.top - offsetTop)/ clientHeight * 100,
+                //     width: currentBox.width/clientWidth * 100,
+                //     height: currentBox.height/clientHeight * 100,
+                // }
+                // console.log("offsetLeft, offsetTop, clientWidth, clientHeight ", offsetLeft, offsetTop, clientWidth, clientHeight)
+                // console.log("currentYoloBox : ", currentYoloBox)
+                // console.log("currebtBox : ", currentBox)
+                // setYoloBoxes([...yoloBoxes, currentYoloBox])
             }
             setIsDrawing(false);
             setCurrentBox(null);
@@ -86,8 +79,28 @@ const ImageViewer = () => {
     };
 
     const saveLabelsAndImages = () => {
-        //Api to save boxes and images in the backend
-        console.log("@@@@@@@yoloBoxes :", yoloBoxes)
+        let {image_position_x, image_position_y, image_width, image_height } = imageDimensions;
+        // let x2_image = image_position_x + image_width
+        // let y2_image = image_position_y + image_height
+        
+        console.log("boxes", boxes)
+        boxes.forEach((box) => {
+            let {left, top, height, width} = box
+            let x1 = left, y1 = top
+            let x2 = left + width, y2 = top + height
+            let x1_image = x1 - image_position_x
+            let y1_image = y1 - image_position_y
+            let x2_image = x2 - image_position_x
+            let y2_image = y2 - image_position_y
+            let x_center = x1_image + (width / 2)
+            let y_center = y1_image + (height / 2)
+            let x_center_normalized = x_center / image_width
+            let y_center_normalized = y_center / image_height
+            let width_normalized = width / image_width
+            let height_normalized = height / image_height
+            let object_class = 9
+            console.log(`${object_class} ${x_center_normalized} ${y_center_normalized} ${width_normalized} ${height_normalized}`)
+        })
 
     }
 
