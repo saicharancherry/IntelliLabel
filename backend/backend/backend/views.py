@@ -12,6 +12,10 @@ import base64
 from django.http import JsonResponse
 from .models import Image, Labels
 import os
+
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter',
 #  'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 
 # 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 
@@ -72,8 +76,13 @@ def upload_image(request):
         new_image = Image(image=image_file)
         filename = image_file.name
         label_file = filename.split('.')[0] + '.txt'
-        # create label file in the directory
         new_image.save()
+        # create label file in the directory
+        directory = os.path.join(BASE_DIR, 'backend/datasets/coco128/labels/train2017')
+        filepath = os.path.join(directory, label_file)
+
+        # Create an empty text file
+        open(filepath, 'w').close()
         return JsonResponse({'status': 'success', 'url': new_image.image.url})
     return JsonResponse({'status': 'error'})
 
@@ -108,3 +117,24 @@ def create_label(request):
     # search:labels = Labels.objects.all().filter(name__icontains="name")
     
 
+@api_view(['POST'])
+def save_labels(request):
+    filename = request.data.get('filename')
+    string_array = request.data.get('string_array')
+    print("filename string_array ", filename, string_array)
+
+    # Validate input
+    if not filename or not string_array:
+        return JsonResponse({'error': 'Both filename and string_array are required.'}, status=400)
+
+    # Specify the directory for the text files
+    directory = os.path.join(BASE_DIR, 'backend/datasets/coco128/labels/train2017')
+    filepath = os.path.join(directory, filename)
+
+    # Write the array of strings to the text file
+    with open(filepath, 'w') as file:
+        for string in string_array:
+            file.write(f"{string}\n")
+
+    # Return a response
+    return JsonResponse({'status': 'success', 'filepath': filepath})

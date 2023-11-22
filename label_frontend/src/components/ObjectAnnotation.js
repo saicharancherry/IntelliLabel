@@ -22,6 +22,9 @@ const ImageViewer = () => {
 
     const onImgLoad = ({ target: img }) => {
         const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
+        const imageName = img.src; // Assumes a simple filename without path
+        console.log('Image name:', imageName);
+        console.log("@@@@@img : ", img.src)
         setImageDimensions({image_position_x: offsetLeft, image_position_y: offsetTop, image_width: clientWidth, image_height: clientHeight })
     };
 
@@ -66,6 +69,30 @@ const ImageViewer = () => {
         }
     };
 
+    const saveLabels = async (filename, formated_labels) => {
+        try {
+          const response = await fetch('http://localhost:8000/api/save_labels/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              filename: filename,
+              string_array: formated_labels, // Assuming stringArray is a multiline string
+            }),
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            console.log('File created successfully:', data.filepath);
+          } else {
+            console.error('Error creating text file:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error:', error.message);
+        }
+    }
+
     const saveLabelsAndImages = () => {
         let {image_position_x, image_position_y, image_width, image_height } = imageDimensions;
         var formated_labels = []
@@ -89,7 +116,10 @@ const ImageViewer = () => {
         })
         setYoloBoxes(formated_labels)
         console.log(formated_labels)
+        saveLabels('s', formated_labels)
     }
+
+
 
     const handleAddLabel = () => {
         setLabels([...labels, '']);
