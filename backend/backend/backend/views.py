@@ -11,7 +11,7 @@ import numpy as np
 import base64
 from django.http import JsonResponse
 from .models import Image, Labels
-
+import os
 # ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter',
 #  'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 
 # 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 
@@ -70,6 +70,9 @@ def upload_image(request):
     if request.FILES['image']:
         image_file = request.FILES['image']
         new_image = Image(image=image_file)
+        filename = image_file.name
+        label_file = filename.split('.')[0] + '.txt'
+        # create label file in the directory
         new_image.save()
         return JsonResponse({'status': 'success', 'url': new_image.image.url})
     return JsonResponse({'status': 'error'})
