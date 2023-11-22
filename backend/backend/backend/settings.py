@@ -142,8 +142,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #         # 'schedule': crontab(minute='*/5'),
 #     },
 # }
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'backend/datasets/coco128/images/train2017')
 
 ASGI_APPLICATION = 'backend.routing.application'
 CHANNEL_LAYERS = {
