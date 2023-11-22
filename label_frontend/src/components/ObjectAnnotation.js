@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../css/AnnotationTool.css'
 
 import { useParams } from 'react-router-dom';
-
+//sahithi
 const ImageViewer = () => {
     const { imageIndex } = useParams() || {};
     const initialLabels = ["car", "person", "laptop"]
