@@ -99,8 +99,12 @@
     font-weight: bold;
     color: rgb(15, 7, 7);
     cursor: pointer;
-    border: 1px solid rgb(89, 8, 228);
+    border: 1px solid rgb(194, 186, 210);
     border-radius: 5px;
     padding: 3px;
-    background-color: rgb(45, 12, 212);
+    background-color: rgb(207, 180, 184);
+}
+
+.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+    display: none;
 }

@@ -1,24 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../css/AnnotationTool.css'
+import React, { useState, useEffect, useRef } from "react";
+import "../css/AnnotationTool.css";
+import TextField from '@mui/material/TextField';
+import { List, ListItem, ListItemText } from '@mui/material';
+import Button from '@mui/material/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+import SearchIcon from '@mui/icons-material/Search';
+import Grid from '@mui/material/Grid';
 
-import { useParams } from 'react-router-dom';
+
+import { useParams } from "react-router-dom";
 //sahithi
 const ImageViewer = () => {
-    const { imageIndex } = useParams() || {};
-    const initialLabels = ["car", "person", "laptop"]
-    const [isDrawing, setIsDrawing] = useState(false);
-    const [startPoint, setStartPoint] = useState(null);
-    const [currentBox, setCurrentBox] = useState(null);
-    const [labels, setLabels] = useState(initialLabels);
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const { imageIndex } = useParams() || {};
+  const initialLabels = ["car", "person", "laptop"];
+  const searchLabelList = [
+    'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+    'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
+    'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+    'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',
+    'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+    'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+    'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
+    'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
+    'hair drier', 'toothbrush'
+  ];
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [startPoint, setStartPoint] = useState(null);
+  const [currentBox, setCurrentBox] = useState(null);
+  const [labels, setLabels] = useState(initialLabels);
+  const [searchLables, setSearchLabels] = useState(searchLabelList);
+  const [newSearchLabel, setNewSearchLabel] = useState('');
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-    const [boxes, setBoxes] = useState([]);
-    const [yoloBoxes, setYoloBoxes] = useState([]);
-    const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
-    const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [boxes, setBoxes] = useState([]);
+  const [yoloBoxes, setYoloBoxes] = useState([]);
+  const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
-    const [selectedImage, setSelectedImage] = useState([]);
-    const [imageDimensions, setImageDimensions] = useState([])
+  const [selectedImage, setSelectedImage] = useState([]);
+  const [imageDimensions, setImageDimensions] = useState([]);
+
+  const searchLabelFlag = false;
+
+
 
     const onImgLoad = ({ target: img }) => {
         const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
@@ -35,7 +59,7 @@ const ImageViewer = () => {
 
     const onBoxClick = (index) => {
         setSelectedBoxIndex(index);
-        setDropdownVisible(true);
+        //setDropdownVisible(true);
         console.log("onboxclick :", index, boxes)
     };
 
@@ -51,7 +75,8 @@ const ImageViewer = () => {
                 left: Math.min(startPoint.x, e.clientX),
                 width: Math.abs(startPoint.x - e.clientX),
                 height: Math.abs(startPoint.y - e.clientY),
-                label: "label"
+                label: "Search label",
+                label2: "Add Search Label"
             };
             setCurrentBox(box);
         }
@@ -117,107 +142,218 @@ const ImageViewer = () => {
         setYoloBoxes(formated_labels)
         console.log(formated_labels)
         saveLabels('s', formated_labels)
+    };
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+
+  const fetchSearchResults = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000?q=${searchTerm}`); // Replace with your actual search API endpoint
+      const data = await response.json();
+      setSearchResults(data.results); // Update search results state
+      searchLabelList.filter((label) =>
+        label.toLowerCase().includes(searchTerm.toLowerCase())
+    )} catch (error) {
+      console.error("Error fetching search results:", error);
+
     }
+  };
+
+
+  useEffect(() => {
+    const droppedImages = JSON.parse(
+      localStorage.getItem("droppedImages") || "[]"
+    );
+    setSelectedImage(droppedImages[imageIndex]);
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      fetchSearchResults();
+    } else {
+      setSearchResults([]); // Clear search results if search term is empty
+    }
+  }, [searchTerm]);
 
 
 
-    const handleAddLabel = () => {
-        setLabels([...labels, '']);
-    };
+  const handleAddLabel = () => {
+    setLabels([...labels, ""]);
+  };
 
-    const handleChange = (index, value) => {
-        const newLabels = [...labels];
-        newLabels[index] = value;
-        setLabels(newLabels);
-    };
+  const handleAddSearchLabel = () => {
+    setSearchLabels([...searchLabelList, ""]);
+  };
 
-    return (
-        <div className='annotation-editor'>
-            {selectedImage && (<div className="image-viewer">
-                <div onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-                    <img src={selectedImage} onLoad={onImgLoad} alt="Selected" draggable="false" />
-                    {currentBox && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                border: '3px solid blue',
-                                ...currentBox,
-                            }}
-                        ><div className="go-back">{currentBox.label}</div></div>
-                    )}
-                    {dropdownVisible && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                top: boxes[selectedBoxIndex].top + 'px',
-                                left: boxes[selectedBoxIndex].left + 'px',
-                                zIndex: 1000, // Ensuring it appears above other elements
-                                backgroundColor: 'white',
-                                border: '1px solid black',
-                                boxShadow: '0px 0px 10px rgba(0,0,0,0.1)'
-                            }}>
-                            {labels.map((label, idx) => (
-                                <div
-                                    key={idx}
-                                    style={{
-                                        padding: '8px 16px',
-                                        cursor: 'pointer'
-                                    }}
-                                    onClick={() => {
-                                        // Clone the boxes array
-                                        const updatedBoxes = [...boxes];
-                                        if (updatedBoxes[selectedBoxIndex]) {
-                                            updatedBoxes[selectedBoxIndex].label = label;
-                                            setBoxes(updatedBoxes);
-                                            setDropdownVisible(false);
-                                        } else {
-                                            console.error(`No bounding box found at index ${selectedBoxIndex}`, boxes);
-                                        }
-                                    }}
 
-                                >
-                                    {label}
-                                </div>
-                            ))}
-                        </div>
-                    )}
 
-                    {boxes.map((box, index) => (
-                        <div
-                            key={index}
-                            onClick={() => onBoxClick(index)}
-                            style={{
-                                position: 'absolute',
-                                border: '3px solid blue',
-                                ...box,
-                            }}
-                        >
-                            <div className="label-display">{box && box.label || "label......"}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>)}
-            <div className="label-editor">
-                <h2>labels</h2>
-                {/* <p>You can now edit the label names...</p> */}
-                {labels.map((label, index) => (
-                    <input
-                        key={index}
-                        value={label}
-                        onChange={(e) => handleChange(index, e.target.value)}
-                        placeholder="Insert label"
-                    />
+
+  const handleInputChange = (e) => {
+    setNewSearchLabel(e.target.value);
+  };
+
+  const setSearchLabel = () => {
+    const newLabels = [...searchLabelList, newSearchLabel];
+    setSearchLabels(newLabels);
+    // Reset the input value after saving
+    setNewSearchLabel('');
+  };
+
+  const visibleSearchLabel = () => {
+    searchLabelFlag = true;
+  }
+
+  const handleChange = (index, value) => {
+    const newLabels = [...labels];
+    newLabels[index] = value;
+    setLabels(newLabels);
+  };
+  
+
+  const handleCreateNewLabel = () => {
+    const newLabel = prompt("Enter the new label:");
+    if (newLabel) {
+      setLabels([...labels, newLabel]);
+    }
+  };
+  
+  return (
+    <div className="annotation-editor">
+      {selectedImage && (
+        <div className="image-viewer">
+          <div
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+          >
+            <img
+              src={selectedImage}
+              onLoad={onImgLoad}
+              alt="Selected"
+              draggable="false"
+            />
+            {currentBox && (
+              <div
+                style={{
+                  position: "absolute",
+                  border: "3px solid black",
+                  ...currentBox,
+                }}
+              >
+                <div className="go-back">{currentBox.label} </div>
+                {/* <div style={{zIndex: 2000}} className="go-back"> {currentBox.label2}</div> */}
+              </div>
+            )}
+            {dropdownVisible && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: boxes[selectedBoxIndex].top + "px",
+                  left: boxes[selectedBoxIndex].left + "px",
+                  zIndex: 1000, // Ensuring it appears above other elements
+                  backgroundColor: "white",
+                  border: "1px solid black",
+                  boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                  overflow:"auto",
+                  maxHeight:"150px"
+                }}
+              >
+                
+                <div>
+                {searchLables.map((label, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      maxHeight: "40px",
+                    }}
+                    onClick={() => {
+                      // Clone the boxes array
+                      const updatedBoxes = [...boxes];
+                      if (updatedBoxes[selectedBoxIndex]) {
+                        updatedBoxes[selectedBoxIndex].label = label;
+                        setBoxes(updatedBoxes);
+                        setDropdownVisible(false);
+                      } else {
+                        console.error(
+                          `No bounding box found at index ${selectedBoxIndex}`,
+                          boxes
+                        );
+                      }
+                    }}
+                  >
+                    {label}
+                    
+                  </div>
+                  
                 ))}
-                <button onClick={handleAddLabel}>+</button>
-                <button onClick={saveLabelsAndImages}> save </button>
+                </div>  
 
-                {/* <div>
+            
+              </div>
+            )}
+
+            {boxes.map((box, index) => (
+              <div
+                key={index}
+                onClick={() => onBoxClick(index)}
+                style={{
+                  position: "absolute",
+                  border: "3px solid black",
+                  ...box,
+                }}
+              >
+                <div className="label-display" onClick={() => {setDropdownVisible(true);}}>
+                  {(box && box.label) || "label......"}
+                </div>
+                 
+                
+                
+              </div>
+              
+            ))}
+          </div>
+          <div>
+            {searchLabelFlag && (
+            <input type={Text}/>) && (
+            <button onClick={visibleSearchLabel}>Our Index Value</button>) }</div>
+        </div>
+        
+      )}
+      
+      <div className="label-editor">
+        <h2>labels</h2>
+        {/* <p>You can now edit the label names...</p> */}
+        {labels.map((label, index) => (
+          <input
+            key={index}
+            value={label}
+            onChange={(e) => handleChange(index, e.target.value)}
+            placeholder="Insert label"
+          />
+        ))}
+        <button onClick={handleAddLabel}>+</button>
+        <button onClick={saveLabelsAndImages}> save </button>
+        
+
+        {/* <div>
                     <button onClick={handleSave}>Accept</button>
                     <button>Cancel</button>
                 </div> */}
-            </div>
-        </div>
-    );
-};
+        <h2>Search Labels</h2>
+        <input
+        id="searchLabelInput"
+        onChange={handleInputChange}
+        value={newSearchLabel} // Controlled component using state
+        placeholder="Insert Search label"
+      />
+      <button onClick={setSearchLabel}>Save</button>
+      </div>
+    </div>
+  );
 
+};
 export default ImageViewer;
