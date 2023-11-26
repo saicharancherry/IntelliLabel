@@ -2,10 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import "../css/AnnotationTool.css";
 import TextField from '@mui/material/TextField';
 import { List, ListItem, ListItemText } from '@mui/material';
-import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 
 import { useParams } from "react-router-dom";
@@ -39,18 +47,46 @@ const ImageViewer = () => {
 
   const [selectedImage, setSelectedImage] = useState([]);
   const [imageDimensions, setImageDimensions] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [label, setLabel] = useState('');
+  const [createnewlabel, setcreatenewlabel] = useState(false);
+  const [textlabelname, settextlabelname] = useState(false);
+
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleCreateLabelClose = () => {
+    setcreatenewlabel(false)
+  }
+
+  const handleLabelChange = (event) => {
+    setLabel(event.target.value);
+  };
+
+  const handleCreateLabel = () => {
+    // Logic to create a new label
+    setcreatenewlabel(true)
+    console.log('Create new label');
+  };
+
+  const handleNewCreateLabel = () => {
+    setLabels([...labels, textlabelname])
+    setSearchLabels([...searchLables, textlabelname])
+  }
 
   const searchLabelFlag = false;
-
-
-
-    const onImgLoad = ({ target: img }) => {
-        const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
-        const imageName = img.src; // Assumes a simple filename without path
-        console.log('Image name:', imageName);
-        console.log("@@@@@img : ", img.src)
-        setImageDimensions({image_position_x: offsetLeft, image_position_y: offsetTop, image_width: clientWidth, image_height: clientHeight })
-    };
+  const onImgLoad = ({ target: img }) => {
+      const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
+      const imageName = img.src; // Assumes a simple filename without path
+      console.log('Image name:', imageName);
+      console.log("@@@@@img : ", img.src)
+      setImageDimensions({image_position_x: offsetLeft, image_position_y: offsetTop, image_width: clientWidth, image_height: clientHeight })
+  };
 
     useEffect(() => {
         const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
@@ -306,7 +342,7 @@ const ImageViewer = () => {
                   ...box,
                 }}
               >
-                <div className="label-display" onClick={() => {setDropdownVisible(true);}}>
+                <div className="label-display" onClick={() => {handleClickOpen(); }}>
                   {(box && box.label) || "label......"}
                 </div>
                  
@@ -352,6 +388,54 @@ const ImageViewer = () => {
       />
       <button onClick={setSearchLabel}>Save</button>
       </div>
+      <Dialog style={{}} open={open} onClose={handleClose} fullWidth>
+          <DialogTitle style={{ backgroundColor: 'black', color: 'white', fontFamily: 'monospace'}}>Select Label</DialogTitle>
+          <DialogContent>
+            <Select
+              value={label}
+              onChange={handleLabelChange}
+              displayEmpty
+              fullWidth
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {searchLables.map((label, idx) => (
+              <MenuItem value={idx} onClick={() => {
+                // Clone the boxes array
+                const updatedBoxes = [...boxes];
+                if (updatedBoxes[selectedBoxIndex]) {
+                  updatedBoxes[selectedBoxIndex].label = label;
+                  updatedBoxes[selectedBoxIndex].labelidx = idx;
+                  setBoxes(updatedBoxes);
+                  setDropdownVisible(false);
+                } else {
+                  console.error(
+                    `No bounding box found at index ${selectedBoxIndex}`,
+                    boxes
+                  );
+                }
+              }}>{label}</MenuItem>
+                ))}
+            </Select>
+          </DialogContent>
+          <DialogActions>
+            <IconButton onClick={handleCreateLabel}>
+              <AddCircleOutlineIcon />
+            </IconButton>
+            <Button onClick={handleClose}>Close</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog style={{}} open={createnewlabel} onClose={handleCreateLabelClose} fullWidth>
+          <DialogTitle style={{ backgroundColor: 'black', color: 'white', fontFamily: 'monospace'}}>Create Label</DialogTitle>
+          <DialogContent>
+            <TextField id="standard-basic" label="Standard" variant="standard" 
+              onChange={(e) => settextlabelname(e.target.value)}
+            />
+          </DialogContent>
+            <Button onClick={handleCreateLabelClose}>Close</Button>
+            <Button onClick={handleNewCreateLabel}>Create</Button>
+        </Dialog>
     </div>
   );
 

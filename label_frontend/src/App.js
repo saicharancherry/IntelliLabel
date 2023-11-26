@@ -9,6 +9,7 @@ import ImageViewer from './components/ObjectAnnotation';
 import ObjectAnnotation from './components/ObjectAnnotation';
 import GalleryPage from './components/Gallery';
 import VideoWebSocket from './components/VideoStreamDetection';
+import LabelDialog from './components/labelstest';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/object-annotation/:imageIndex' element={<ObjectAnnotation/>}/>
           <Route path='/gallery-page' element={<GalleryPage/>}/>
           <Route path='/videoStream' element={<VideoWebSocket/>}/>
+          <Route path='/testlabel' element={<LabelDialog/>}/>
         </Routes>
       </BrowserRouter>
     </>
