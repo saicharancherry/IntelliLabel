@@ -18,9 +18,7 @@ function DropImages() {
 
     acceptedFiles.forEach(file => {
       const formData = new FormData();
-      // acceptedFiles.forEach(file => {
       formData.append('image', file);
-      // });
   
       axios.post('http://localhost:8000/upload/', formData, {
           headers: {
@@ -29,19 +27,19 @@ function DropImages() {
       })
       .then(response => {
           console.log('Image uploaded successfully', response);
+          const reader = new FileReader();
+          reader.onload = () => {
+            // Store image as a data URL in local storage
+            const images = JSON.parse(localStorage.getItem(IMAGES_KEY) || '[]');
+            images.push({image: reader.result, file_name: response.data.file_name});
+            localStorage.setItem(IMAGES_KEY, JSON.stringify(images));
+    
+          };
+          reader.readAsDataURL(file);
       })
       .catch(error => {
           console.error('Error uploading image', error);
       });
-      const reader = new FileReader();
-      reader.onload = () => {
-        // Store image as a data URL in local storage
-        const images = JSON.parse(localStorage.getItem(IMAGES_KEY) || '[]');
-        images.push(reader.result);
-        localStorage.setItem(IMAGES_KEY, JSON.stringify(images));
-
-      };
-      reader.readAsDataURL(file);
     });
     setSelectedFiles(acceptedFiles);
 

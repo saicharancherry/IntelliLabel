@@ -11,7 +11,7 @@ import numpy as np
 import base64
 from django.http import JsonResponse
 from .models import Image, Labels
-import os
+import os, json
 
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +41,7 @@ class ObjectDetection:
         
         self.CLASS_NAMES_DICT = self.model.model.names
     
-        self.box_annotator = sv.BoxAnnotator(color=sv.ColorPalette.default(), thickness=3, text_thickness=3, text_scale=1.5)
+        self.box_annotator = sv.BoxAnnotator(color=sv.ColorPalette.default(), thickness=3, text_thickness=1, text_scale=1, text_padding=2)
     
 
     def load_model(self):
@@ -49,18 +49,15 @@ class ObjectDetection:
         model.fuse()
         return model
 
-
     def predict(self, frame):
-       
         results = self.model(frame)
-        
         return results
-    
 
     def plot_bboxes(self, results, frame):
         class_ids = []
         labels = list(results[0].names.values()) 
         detections = sv.Detections.from_ultralytics(results[0])
+        print("$$$ detections", detections)
         frame = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
         return frame, class_ids
     
@@ -73,36 +70,38 @@ class ObjectDetection:
 def upload_image(request):
     if request.FILES['image']:
         image_file = request.FILES['image']
-        new_image = Image(image=image_file)
-        filename = image_file.name
-        label_file = filename.split('.')[0] + '.txt'
-        new_image.save()
-        # create label file in the directory
+        image_instance = Image.objects.create(image=image_file)
+        file_name = image_instance.image.name
+        label_file = file_name.split('.')[0] + '.txt'
+        print(file_name, label_file, image_file)
+
+        # # create label file in the directory
         directory = os.path.join(BASE_DIR, 'backend/datasets/coco128/labels/train2017')
         filepath = os.path.join(directory, label_file)
 
         # Create an empty text file
         open(filepath, 'w').close()
-        return JsonResponse({'status': 'success', 'url': new_image.image.url})
+        return JsonResponse({'status': 'success', 'file_name': file_name.split('.')[0]})
     return JsonResponse({'status': 'error'})
 
 @api_view(['POST'])
 def detect_objects(request):
+    # data = json.loads(request.body)
     data = JSONParser().parse(request)
     images_base64 = data.get('images', [])
     detector = ObjectDetection(capture_index=0)
     response_data = []
     for img_base64 in images_base64:
-        base64_str = img_base64.split(",")[1]
+        base64_str = img_base64['image'].split(",")[1]
         img_bytes = base64.b64decode(base64_str)
         img_arr = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
         annotated_image = detector.detect_objects_in_image(img)
         if annotated_image is None or annotated_image.size == 0:
-            response_data.append(img_base64)
+            response_data.append({'image':img_base64, 'file_name': images_base64['file_name']})
         else:            
             _, buffer = cv2.imencode('.jpg', annotated_image)
-            response_data.append("data:image/png;base64," + base64.b64encode(buffer).decode('utf-8'))
+            response_data.append({'image': "data:image/png;base64," + base64.b64encode(buffer).decode('utf-8'), 'file_name': img_base64['file_name']})
 
     return JsonResponse({"annotated_images": response_data})
 

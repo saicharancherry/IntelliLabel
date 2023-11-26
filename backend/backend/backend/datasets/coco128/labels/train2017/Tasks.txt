@@ -1,7 +1,0 @@
-Tasks:
-1. store labels in the database
-2. Implement Label search functionality in the annotaion page
-3. create new label in the backend
-4. Research the bounding box dimensions format
-5. persist images and labels files in the backend during image upload.
-6. change gallary page - last priority

@@ -75,10 +75,10 @@ function Gallery() {
           {uploadedImages.map((image, index) => (
             <img
               key={index}
-              src={image}
+              src={image.image}
               alt={`Image ${index}`}
               className="gallery-image"
-              onClick={() => handleImageClick(image, index)}
+              onClick={() => handleImageClick(image.image, index)}
             />
           ))}
         </div>

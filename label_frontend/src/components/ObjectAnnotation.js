@@ -166,7 +166,7 @@ const ImageViewer = () => {
     const droppedImages = JSON.parse(
       localStorage.getItem("droppedImages") || "[]"
     );
-    setSelectedImage(droppedImages[imageIndex]);
+    setSelectedImage(droppedImages[imageIndex].image);
   }, []);
 
   useEffect(() => {
