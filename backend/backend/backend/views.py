@@ -105,6 +105,24 @@ def detect_objects(request):
 
     return JsonResponse({"annotated_images": response_data})
 
+@api_view(['POST'])
+def save_annotations(request):
+    try:
+        data = json.loads(request.body)
+        filename = data['filename'] +'.txt'
+        content = data['content']
+        directory = os.path.join(BASE_DIR, 'backend/datasets/coco128/labels/train2017')
+        filepath = os.path.join(directory, filename)
+        # Save the strings to a file
+        with open(filepath, 'w') as file:
+            for line in content:
+                file.write(line + "\n")  # Writing each string in a new line
+
+        return JsonResponse({'message': 'File saved successfully!'}, status=200)
+
+    except (KeyError, json.JSONDecodeError) as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    
 
 @api_view(['POST'])
 def create_label(request):

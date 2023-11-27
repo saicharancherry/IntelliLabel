@@ -14,7 +14,13 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-
+import InboxIcon from '@mui/icons-material/Inbox';
+import Box from '@mui/material/Box';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import { TypeAnimation } from 'react-type-animation';
 
 import { useParams } from "react-router-dom";
 //sahithi
@@ -46,6 +52,7 @@ const ImageViewer = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const [selectedImage, setSelectedImage] = useState([]);
+  const [selectedImagename, setSelectedImagename] = useState('');
   const [imageDimensions, setImageDimensions] = useState([]);
   const [open, setOpen] = useState(false);
   const [label, setLabel] = useState('');
@@ -154,7 +161,7 @@ const ImageViewer = () => {
         }
     }
 
-    const saveLabelsAndImages = () => {
+    const saveLabelsAndImages = async () => {
         let {image_position_x, image_position_y, image_width, image_height } = imageDimensions;
         var formated_labels = []
         boxes.forEach((box) => {
@@ -176,13 +183,38 @@ const ImageViewer = () => {
             formated_labels.push(formated_label_String)
         })
         setYoloBoxes(formated_labels)
+        const data = {
+          filename: selectedImagename,
+          content: formated_labels,
+        };
+    
+        try {
+          const response = await fetch('http://localhost:8000/api/annotations/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+    
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+    
+          setNotification('File saved successfully!');
+          setTimeout(() => setNotification(''), 5000); // Hide notification after 5 seconds
+        } catch (error) {
+          console.error('Error saving file:', error);
+          setNotification('Failed to save file.');
+          setTimeout(() => setNotification(''), 5000);
+        }
         console.log(formated_labels)
-        saveLabels('s', formated_labels)
+        // saveLabels('s', formated_labels)
     };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
+  const [notification, setNotification] = useState('');
 
   const fetchSearchResults = async () => {
     try {
@@ -203,6 +235,7 @@ const ImageViewer = () => {
       localStorage.getItem("droppedImages") || "[]"
     );
     setSelectedImage(droppedImages[imageIndex].image);
+    setSelectedImagename(droppedImages[imageIndex].file_name);
   }, []);
 
   useEffect(() => {
@@ -233,7 +266,6 @@ const ImageViewer = () => {
   const setSearchLabel = () => {
     const newLabels = [...searchLabelList, newSearchLabel];
     setSearchLabels(newLabels);
-    // Reset the input value after saving
     setNewSearchLabel('');
   };
 
@@ -361,33 +393,64 @@ const ImageViewer = () => {
       )}
       
       <div className="label-editor">
-        <h2>labels</h2>
+        <h2>selected labels</h2>
         {/* <p>You can now edit the label names...</p> */}
-        {labels.map((label, index) => (
+        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'ThreeDLightShadow' }}>
+          <nav aria-label="main mailbox folders">
+            <List>
+              {boxes.map((box, index) => (
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={box.label} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </nav>
+        </Box>
+
+        {/* {boxes.map((box, index) => (
           <input
             key={index}
-            value={label}
+            value={box.label}
             onChange={(e) => handleChange(index, e.target.value)}
             placeholder="Insert label"
           />
-        ))}
-        <button onClick={handleAddLabel}>+</button>
-        <button onClick={saveLabelsAndImages}> save </button>
-        
+        ))} */}
+        {/* <button onClick={handleAddLabel}>+</button> */}
+         <button onClick={saveLabelsAndImages}>save annotations</button>
+      {notification && <div className="notification">{notification}</div>}
+
 
         {/* <div>
                     <button onClick={handleSave}>Accept</button>
                     <button>Cancel</button>
                 </div> */}
-        <h2>Search Labels</h2>
+        {/* <h2>Search Labels</h2>
         <input
         id="searchLabelInput"
         onChange={handleInputChange}
         value={newSearchLabel} // Controlled component using state
         placeholder="Insert Search label"
       />
-      <button onClick={setSearchLabel}>Save</button>
-      </div>
+      <button onClick={setSearchLabel}>Save</button> */}
+        <div>
+          <TypeAnimation
+            sequence={[
+              'Welcome to IntelliLabel!\nI\'m a Developer\nand a Designer.',
+              1000 // Delay before stopping the animation
+            ]}
+            speed={200}
+            wrapper="div"
+            style={{ whiteSpace: 'pre-line', fontSize: '2em' }}
+            omitDeletionAnimation={true}
+            cursor={false}
+          />
+        </div>
+          </div>
       <Dialog style={{}} open={open} onClose={handleClose} fullWidth>
           <DialogTitle style={{ backgroundColor: 'black', color: 'white', fontFamily: 'monospace'}}>Select Label</DialogTitle>
           <DialogContent>
@@ -429,7 +492,7 @@ const ImageViewer = () => {
         <Dialog style={{}} open={createnewlabel} onClose={handleCreateLabelClose} fullWidth>
           <DialogTitle style={{ backgroundColor: 'black', color: 'white', fontFamily: 'monospace'}}>Create Label</DialogTitle>
           <DialogContent>
-            <TextField id="standard-basic" label="Standard" variant="standard" 
+            <TextField id="standard-basic" label="label name" variant="standard" 
               onChange={(e) => settextlabelname(e.target.value)}
             />
           </DialogContent>

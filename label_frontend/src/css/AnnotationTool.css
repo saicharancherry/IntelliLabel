@@ -4,6 +4,14 @@
     width: 100%;
 }
 
+.notification {
+    margin-top: 5px;
+    padding: 5px;
+    background-color: #4CAF50; /* Green background for success */
+    color: white;
+    text-align: center;
+  }
+
 .image-container {
     position: relative;
     width: 70%;
