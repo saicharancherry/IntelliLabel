@@ -80,10 +80,34 @@ const ImageViewer = () => {
     setcreatenewlabel(true)
     console.log('Create new label');
   };
+const createnewlabelapi = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/save_labels/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: textlabelname
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('File created successfully:', data.labels);
+      fetchLabels()
+    } else {
+      console.error('Error creating text file:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
 
   const handleNewCreateLabel = () => {
-    setLabels([...labels, textlabelname])
-    setSearchLabels([...searchLables, textlabelname])
+    // setLabels([...labels, textlabelname])
+    createnewlabelapi()
+    fetchLabels()
   }
 
   const searchLabelFlag = false;
@@ -99,6 +123,31 @@ const ImageViewer = () => {
         const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
         setSelectedImage(droppedImages[imageIndex])
     }, []);
+    
+    const fetchLabels = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/get_all_labels/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          console.log('File created successfully:', data.labels);
+          setSearchLabels(data.labels)
+        } else {
+          console.error('Error creating text file:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
+    }
+
+    useEffect(() => {
+      fetchLabels()
+    }, [])
 
     const onBoxClick = (index) => {
         setSelectedBoxIndex(index);
@@ -178,7 +227,7 @@ const ImageViewer = () => {
             let y_center_normalized = y_center / image_height
             let width_normalized = width / image_width
             let height_normalized = height / image_height
-            let object_class = 9
+            let object_class = box.labelid
             let formated_label_String = `${object_class} ${x_center_normalized} ${y_center_normalized} ${width_normalized} ${height_normalized}`
             formated_labels.push(formated_label_String)
         })
@@ -311,59 +360,8 @@ const ImageViewer = () => {
                 }}
               >
                 <div className="go-back">{currentBox.label} </div>
-                {/* <div style={{zIndex: 2000}} className="go-back"> {currentBox.label2}</div> */}
               </div>
             )}
-            {dropdownVisible && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: boxes[selectedBoxIndex].top + "px",
-                  left: boxes[selectedBoxIndex].left + "px",
-                  zIndex: 1000, // Ensuring it appears above other elements
-                  backgroundColor: "white",
-                  border: "1px solid black",
-                  boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-                  overflow:"auto",
-                  maxHeight:"150px"
-                }}
-              >
-                
-                <div>
-                {searchLables.map((label, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      padding: "8px 16px",
-                      cursor: "pointer",
-                      maxHeight: "40px",
-                    }}
-                    onClick={() => {
-                      // Clone the boxes array
-                      const updatedBoxes = [...boxes];
-                      if (updatedBoxes[selectedBoxIndex]) {
-                        updatedBoxes[selectedBoxIndex].label = label;
-                        setBoxes(updatedBoxes);
-                        setDropdownVisible(false);
-                      } else {
-                        console.error(
-                          `No bounding box found at index ${selectedBoxIndex}`,
-                          boxes
-                        );
-                      }
-                    }}
-                  >
-                    {label}
-                    
-                  </div>
-                  
-                ))}
-                </div>  
-
-            
-              </div>
-            )}
-
             {boxes.map((box, index) => (
               <div
                 key={index}
@@ -377,11 +375,7 @@ const ImageViewer = () => {
                 <div className="label-display" onClick={() => {handleClickOpen(); }}>
                   {(box && box.label) || "label......"}
                 </div>
-                 
-                
-                
-              </div>
-              
+              </div>      
             ))}
           </div>
           <div>
@@ -411,32 +405,8 @@ const ImageViewer = () => {
             </List>
           </nav>
         </Box>
-
-        {/* {boxes.map((box, index) => (
-          <input
-            key={index}
-            value={box.label}
-            onChange={(e) => handleChange(index, e.target.value)}
-            placeholder="Insert label"
-          />
-        ))} */}
-        {/* <button onClick={handleAddLabel}>+</button> */}
          <button onClick={saveLabelsAndImages}>save annotations</button>
       {notification && <div className="notification">{notification}</div>}
-
-
-        {/* <div>
-                    <button onClick={handleSave}>Accept</button>
-                    <button>Cancel</button>
-                </div> */}
-        {/* <h2>Search Labels</h2>
-        <input
-        id="searchLabelInput"
-        onChange={handleInputChange}
-        value={newSearchLabel} // Controlled component using state
-        placeholder="Insert Search label"
-      />
-      <button onClick={setSearchLabel}>Save</button> */}
         <div>
           <TypeAnimation
             sequence={[
@@ -463,13 +433,13 @@ const ImageViewer = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              {searchLables.map((label, idx) => (
-              <MenuItem value={idx} onClick={() => {
+              {searchLables.map((labelobj, idx) => (
+              <MenuItem value={labelobj.id} onClick={() => {
                 // Clone the boxes array
                 const updatedBoxes = [...boxes];
                 if (updatedBoxes[selectedBoxIndex]) {
-                  updatedBoxes[selectedBoxIndex].label = label;
-                  updatedBoxes[selectedBoxIndex].labelidx = idx;
+                  updatedBoxes[selectedBoxIndex].label = labelobj.name;
+                  updatedBoxes[selectedBoxIndex].labelid = labelobj.id;
                   setBoxes(updatedBoxes);
                   setDropdownVisible(false);
                 } else {
@@ -478,7 +448,7 @@ const ImageViewer = () => {
                     boxes
                   );
                 }
-              }}>{label}</MenuItem>
+              }}>{labelobj.name}</MenuItem>
                 ))}
             </Select>
           </DialogContent>

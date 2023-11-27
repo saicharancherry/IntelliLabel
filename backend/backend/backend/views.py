@@ -125,33 +125,16 @@ def save_annotations(request):
     
 
 @api_view(['POST'])
-def create_label(request):
-    label = Labels(name='charan')  # Replace 'Your Label Name' with the actual label name
+def save_labels(request):
+    label_name = request.data.get('name')
+    label = Labels(name=label_name)  # Replace 'Your Label Name' with the actual label name
     label.save()
-    labels = Labels.objects.all()
-    for label in labels:
-        print(label.name)
-    # search:labels = Labels.objects.all().filter(name__icontains="name")
+    return JsonResponse({"success": True})
     
 
-@api_view(['POST'])
-def save_labels(request):
-    filename = request.data.get('filename')
-    string_array = request.data.get('string_array')
-    print("filename string_array ", filename, string_array)
-
-    # Validate input
-    if not filename or not string_array:
-        return JsonResponse({'error': 'Both filename and string_array are required.'}, status=400)
-
-    # Specify the directory for the text files
-    directory = os.path.join(BASE_DIR, 'backend/datasets/coco128/labels/train2017')
-    filepath = os.path.join(directory, filename)
-
-    # Write the array of strings to the text file
-    with open(filepath, 'w') as file:
-        for string in string_array:
-            file.write(f"{string}\n")
-
-    # Return a response
-    return JsonResponse({'status': 'success', 'filepath': filepath})
+@api_view(['GET'])
+def get_all_label(request):
+    label = Labels()  # Replace 'Your Label Name' with the actual label name
+    labels = Labels.objects.all()
+    labels_data = [{'id': label.id, 'name': label.name} for label in labels]
+    return JsonResponse({"labels": labels_data})
