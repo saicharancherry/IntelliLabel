@@ -5,6 +5,7 @@ import onlineSource from '../images/online.png'
 import privateSource from '../images/private.png'
 import openBox from '../images/box-opened.png'
 
+import { TypeAnimation } from 'react-type-animation';
 import '../App.css';
 
 function HomePage() {
@@ -28,7 +29,34 @@ function HomePage() {
   return (
     <div className='App'>
       <div className="container">
-        <h1 className='top-left-header'>Intelli Label</h1>
+        <h1 className='top-left-header'>
+        <TypeAnimation
+            sequence={[
+              'IntelliLabel',
+              1000 // Delay before stopping the animation
+            ]}
+            speed={200}
+            wrapper="div"
+            style={{ whiteSpace: 'pre-line', fontSize: '2em' }}
+            omitDeletionAnimation={true}
+            cursor={false}
+          />
+          </h1>
+          {/* <h5>
+        <TypeAnimation
+            sequence={[
+              2000,
+              'we annotate smartly',
+              1000 // Delay before stopping the animation
+            ]}
+            speed={200}
+            wrapper="div"
+            style={{ whiteSpace: 'pre-line', fontSize: '2em' }}
+            omitDeletionAnimation={true}
+            cursor={false}
+          /> */}
+          {/* </h5> */}
+          {/* Intelli Label</h1> */}
         <div className="features">
           <Feature title="Open source and free to use under GPLv3 license" imgPath="" />
           <Feature title="No advanced installation required, just open in your browser" />

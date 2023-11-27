@@ -11,7 +11,7 @@
 path: /Users/saicharan/Desktop/Master Project/IntelliLabel/backend/backend/backend/datasets/coco128  # dataset root dir
 train: images/train2017  # train images (relative to 'path') 128 images
 val: images/train2017  # val images (relative to 'path') 128 images
-test:  images/train2017# test images (optional)
+test:  images/train2017 # test images (optional)
 
 # Classes
 names:

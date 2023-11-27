@@ -410,7 +410,7 @@ const createnewlabelapi = async () => {
         <div>
           <TypeAnimation
             sequence={[
-              'Welcome to IntelliLabel!\nI\'m a Developer\nand a Designer.',
+              'Welcome to IntelliLabel!\nI\'m a smart annotator > Developer\nand > Designer.',
               1000 // Delay before stopping the animation
             ]}
             speed={200}

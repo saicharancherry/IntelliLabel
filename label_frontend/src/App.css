@@ -63,6 +63,7 @@
     color: #fff; /* Your desired text color (white in this case) */
     position: fixed;
     top: 0;
+    font-family: 'monospace';
     left: 0;
     width: 100%;
     padding: 10px; /* Adjust padding as needed */
