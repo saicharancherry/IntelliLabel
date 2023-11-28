@@ -12,6 +12,7 @@ import base64
 from django.http import JsonResponse
 from .models import Image, Labels
 import os, json
+from django.http import FileResponse
 
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -138,3 +139,13 @@ def get_all_label(request):
     labels = Labels.objects.all()
     labels_data = [{'id': label.id, 'name': label.name} for label in labels]
     return JsonResponse({"labels": labels_data})
+
+@api_view(['GET'])
+def download_file(request):
+    # Replace 'path-to-your-file' with the actual path to your file on the server
+    file_path = os.path.join(BASE_DIR, 'backend/yolov8n.pt')
+
+    file_name = os.path.basename(file_path)
+    response = FileResponse(open(file_path, 'rb'))
+    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+    return response

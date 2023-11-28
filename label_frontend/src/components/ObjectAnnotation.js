@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../css/AnnotationTool.css";
 import TextField from '@mui/material/TextField';
-import { List, ListItem, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemText, colors } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid';
@@ -335,6 +335,26 @@ const createnewlabelapi = async () => {
       setLabels([...labels, newLabel]);
     }
   };
+
+  const handleDownloadClick = () => {
+    // Replace 'backend-url' with the actual URL of your Django backend endpoint
+    fetch('http://localhost:8000/api/download/', {
+          method: 'GET'
+        })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'yolov8n.pt'; // Specify the file name and extension
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
+  };
   
   return (
     <div className="annotation-editor">
@@ -405,7 +425,9 @@ const createnewlabelapi = async () => {
             </List>
           </nav>
         </Box>
-         <button onClick={saveLabelsAndImages}>save annotations</button>
+         <button onClick={saveLabelsAndImages} style={{backgroundColor:  'green'}}>save annotations</button>
+         <button onClick={handleDownloadClick} style={{backgroundColor:  'green'}}> Export Your Trained Model</button>
+
       {notification && <div className="notification">{notification}</div>}
         <div>
           <TypeAnimation
