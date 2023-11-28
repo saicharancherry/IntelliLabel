@@ -16,32 +16,13 @@ from django.http import FileResponse
 
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter',
-#  'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 
-# 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 
-# 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 
-# 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon',
-#  'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 
-# 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table',
-#  'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 
-# 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear',
-#  'hair drier', 'toothbrush']
 class ObjectDetection:
     def __init__(self, capture_index):
-       
         self.capture_index = capture_index
-        
         self.email_sent = False
-        
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-        print("Using Device: ", self.device)
-        
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'        
         self.model = self.load_model()
-        
         self.CLASS_NAMES_DICT = self.model.model.names
-    
         self.box_annotator = sv.BoxAnnotator(color=sv.ColorPalette.default(), thickness=3, text_thickness=1, text_scale=1, text_padding=2)
     
 
@@ -58,7 +39,6 @@ class ObjectDetection:
         class_ids = []
         labels = list(results[0].names.values()) 
         detections = sv.Detections.from_ultralytics(results[0])
-        print("$$$ detections", detections)
         frame = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
         return frame, class_ids
     
@@ -87,7 +67,6 @@ def upload_image(request):
 
 @api_view(['POST'])
 def detect_objects(request):
-    # data = json.loads(request.body)
     data = JSONParser().parse(request)
     images_base64 = data.get('images', [])
     detector = ObjectDetection(capture_index=0)
