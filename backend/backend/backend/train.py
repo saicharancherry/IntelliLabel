@@ -1,8 +1,12 @@
 from ultralytics import YOLO
 import os
 import shutil
-save_dir = './runs'
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
+# save_dir = os.path.join(BASE_DIR, '/backend/runs')
+# print("@@@@@@ BASE_DIR ", save_dir)
 def copy_model_best_to_yolov8n(original_path, new_directory, new_name):
     if not os.path.isfile(original_path):
         raise FileNotFoundError(f"The file {original_path} does not exist.")
@@ -28,10 +32,12 @@ def remove_all_files(folder_path):
             os.remove(file_path)
 
 def train_model():
+    save_dir = os.path.join(BASE_DIR, './backend/runs')
+    yaml_dir = os.path.join(BASE_DIR, './backend/dy.yaml')
     shutil.rmtree(save_dir)
     os.makedirs(save_dir)
     model = YOLO('yolov8n.pt')
-    results = model.train(data='dy.yaml', epochs=3, imgsz=640, device='mps', project='./runs')
+    results = model.train(data=yaml_dir, epochs=3, imgsz=640, device='mps', project=save_dir)
     copy_model_best_to_yolov8n('./runs/train/weights/best.pt', './', 'yolov8n')
     remove_all_files('./datasets/coco128/images/train2017')
     remove_all_files('./datasets/coco128/labels/train2017')
