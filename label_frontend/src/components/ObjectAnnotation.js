@@ -23,7 +23,8 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import { TypeAnimation } from 'react-type-animation';
 
 import { useParams } from "react-router-dom";
-//sahithi
+import DeleteIcon from '@mui/icons-material/Delete'; // Import the delete icon
+
 const ImageViewer = () => {
   const { imageIndex } = useParams() || {};
   const initialLabels = ["car", "person", "laptop"];
@@ -103,6 +104,13 @@ const createnewlabelapi = async () => {
     console.error('Error:', error.message);
   }
 }
+
+const handleDelete = (index) => {
+  // Create a copy of the boxes array without the box at the specified index
+  const updatedBoxes = [...boxes];
+  updatedBoxes.splice(index, 1); // Remove the box at the specified index
+  setBoxes(updatedBoxes);
+};
 
   const handleNewCreateLabel = () => {
     // setLabels([...labels, textlabelname])
@@ -419,14 +427,18 @@ const createnewlabelapi = async () => {
                       <InboxIcon />
                     </ListItemIcon>
                     <ListItemText primary={box.label} />
+                    <DeleteIcon
+                      onClick={() => handleDelete(index)} // Handle delete on click
+                      color="error" // Set color as per your design
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}
             </List>
           </nav>
         </Box>
-         <button onClick={saveLabelsAndImages} style={{backgroundColor:  'green'}}>save annotations</button>
-         <button onClick={handleDownloadClick} style={{backgroundColor:  'green'}}> Export Your Trained Model</button>
+         <button onClick={saveLabelsAndImages} style={{backgroundColor:  'ash', borderRadius: '5px'}}>save annotations</button>
+         <button onClick={handleDownloadClick} style={{backgroundColor:  'violet', color: 'black', borderRadius: '2px'}}> Export Your Trained Model</button>
 
       {notification && <div className="notification">{notification}</div>}
         <div>
