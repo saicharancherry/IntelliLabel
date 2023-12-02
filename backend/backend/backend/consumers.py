@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 import torch
 import numpy as np
 import base64
-
+from collections import Counter
 class ObjectDetection:
     def __init__(self, capture_index):
        
@@ -44,21 +44,15 @@ class ObjectDetection:
     
 
     def plot_bboxes(self, results, frame):
-        class_ids = []
         labels = list(results[0].names.values())
-    
         detections = sv.Detections.from_ultralytics(results[0])
-
-        frame = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
-        
-        
-        return frame, class_ids
+        frame, detection_names = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
+        return frame, detection_names
     
     def detect_objects_in_image(self, image):
-        # self.model = self.load_model()
         results = self.predict(image)
-        annotated_image, _ = self.plot_bboxes(results, image)
-        return annotated_image
+        annotated_image, detection_names = self.plot_bboxes(results, image)
+        return annotated_image, detection_names
 
 
 class VideoFrameConsumer(AsyncWebsocketConsumer):
@@ -78,8 +72,7 @@ class VideoFrameConsumer(AsyncWebsocketConsumer):
         img_bytes = base64.b64decode(base64_str)
         img_arr = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
-        annotated_image = self.detector.detect_objects_in_image(img)
+        annotated_image, detection_names = self.detector.detect_objects_in_image(img)
         _, buffer = cv2.imencode('.jpg', annotated_image)
-        response = "data:image/png;base64," + base64.b64encode(buffer).decode('utf-8')
-        # response = "charan : Frame processed"
-        await self.send(text_data=json.dumps({'message': response}))
+        response = {"img": "data:image/png;base64," + base64.b64encode(buffer).decode('utf-8'),  "detection_names": list(Counter(detection_names).items())}
+        await self.send(text_data=json.dumps(response))

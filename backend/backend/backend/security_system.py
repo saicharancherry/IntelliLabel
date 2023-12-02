@@ -3,27 +3,7 @@ import numpy as np
 import cv2
 from time import time
 from ultralytics import YOLO
-
 import supervision as sv
-
-
-# import smtplib
-# from email.mime.multipart import MIMEMultipart
-# from email.mime.text import MIMEText
-
-    
-# def send_email(to_email, from_email, people_detected=1):
- 
-#     message = MIMEMultipart()
-#     message['From'] = from_email
-#     message['To'] = to_email
-#     message['Subject'] = "Security Alert"
-#     # add in the message body
-#     message.attach(MIMEText(f'ALERT - {people_detected} persons has been detected!!', 'plain'))
-#     server.sendmail(from_email, to_email, message.as_string())
-
-    
-
 
 class ObjectDetection:
 

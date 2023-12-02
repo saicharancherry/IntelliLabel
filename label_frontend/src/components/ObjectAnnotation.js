@@ -21,9 +21,18 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import { TypeAnimation } from 'react-type-animation';
-
+import { styled } from '@mui/material/styles';
 import { useParams } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete'; // Import the delete icon
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import FolderIcon from '@mui/icons-material/Folder';
+
+
 
 const ImageViewer = () => {
   const { imageIndex } = useParams() || {};
@@ -59,7 +68,10 @@ const ImageViewer = () => {
   const [label, setLabel] = useState('');
   const [createnewlabel, setcreatenewlabel] = useState(false);
   const [textlabelname, settextlabelname] = useState(false);
+  const [selectedImageDetectionNames, setSelectedImageDetectionNames] = useState([]);
 
+
+  
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -122,15 +134,13 @@ const handleDelete = (index) => {
   const onImgLoad = ({ target: img }) => {
       const { offsetLeft, offsetTop, clientWidth, clientHeight } = img;
       const imageName = img.src; // Assumes a simple filename without path
-      console.log('Image name:', imageName);
-      console.log("@@@@@img : ", img.src)
       setImageDimensions({image_position_x: offsetLeft, image_position_y: offsetTop, image_width: clientWidth, image_height: clientHeight })
   };
 
-    useEffect(() => {
-        const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
-        setSelectedImage(droppedImages[imageIndex])
-    }, []);
+    // useEffect(() => {
+    //     const droppedImages = JSON.parse(localStorage.getItem('droppedImages') || '[]');
+    //     setSelectedImage(droppedImages[imageIndex])
+    // }, []);
     
     const fetchLabels = async () => {
       try {
@@ -293,6 +303,8 @@ const handleDelete = (index) => {
     );
     setSelectedImage(droppedImages[imageIndex].image);
     setSelectedImagename(droppedImages[imageIndex].file_name);
+    setSelectedImageDetectionNames(droppedImages[imageIndex].detection_names);
+    console.log("$$$ setSelectedImageDetectionNames ", selectedImagename)
   }, []);
 
   useEffect(() => {
@@ -363,6 +375,10 @@ const handleDelete = (index) => {
         console.error('Error downloading file:', error);
       });
   };
+  
+  const Demo = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+  }));
   
   return (
     <div className="annotation-editor">
@@ -439,6 +455,16 @@ const handleDelete = (index) => {
         </Box>
          <button onClick={saveLabelsAndImages} style={{backgroundColor:  'ash', borderRadius: '5px'}}>save annotations</button>
          <button onClick={handleDownloadClick} style={{backgroundColor:  'violet', color: 'black', borderRadius: '2px'}}> Export Your Trained Model</button>
+        <div>
+          <h2>Objects Detected</h2>
+          <ul>
+            {selectedImageDetectionNames.map((name, freq) => (
+              <li>
+                {name}: {freq}
+              </li>
+            ))}
+          </ul>
+        </div>
 
       {notification && <div className="notification">{notification}</div>}
         <div>
@@ -454,7 +480,7 @@ const handleDelete = (index) => {
             cursor={false}
           />
         </div>
-          </div>
+      </div>
       <Dialog style={{}} open={open} onClose={handleClose} fullWidth>
           <DialogTitle style={{ backgroundColor: 'black', color: 'white', fontFamily: 'monospace'}}>Select Label</DialogTitle>
           <DialogContent>

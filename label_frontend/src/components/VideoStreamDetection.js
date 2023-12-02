@@ -6,6 +6,7 @@ const VideoWebSocket = () => {
     const canvasRef = useRef(null);
     const [receivedImage, setReceivedImage] = useState(null);
     const [error, setError] = useState(null);
+    const [selectedImageDetectionNames, setSelectedImageDetectionNames] = useState([]);
 
     useEffect(() => {
         const rws = new ReconnectingWebSocket('ws://localhost:8000/ws/videoframes/');
@@ -50,8 +51,11 @@ const VideoWebSocket = () => {
         };
 
         rws.onmessage = (message) => {
-            console.log('Received: ', JSON.parse(message.data).message);
-            setReceivedImage(JSON.parse(message.data).message); // Assuming the server sends a base64 image
+            console.log('Received: ', JSON.parse(message.data));
+            setReceivedImage(JSON.parse(message.data).img); // Assuming the server sends a base64 image
+            setSelectedImageDetectionNames(JSON.parse(message.data).detection_names);
+            console.log("#!##  JSON.parse(message.data).messages.detection_names ", selectedImageDetectionNames)
+
         };
 
         rws.onerror = (error) => {
@@ -66,12 +70,25 @@ const VideoWebSocket = () => {
     }, []);
 
     return (
-        <div style={{ backgroundColor: 'black', height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <h2 style={{ color: 'white', position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)' }}>Video WebSocket</h2>
-            {error && <div style={{ color: 'red' }}>{error}</div>}
-            <video ref={videoRef} style={{ display: 'none' }}></video>
-            <canvas ref={canvasRef} style={{ display: 'none' }} width="1500" height="1000"></canvas>
-            {receivedImage && <img style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain' }} src={receivedImage} alt="Received Frame" />}
+        <div>
+            <div style={{ backgroundColor: 'black', height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <h2 style={{ color: 'white', position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)' }}>Video WebSocket</h2>
+                {error && <div style={{ color: 'red' }}>{error}</div>}
+                <video ref={videoRef} style={{ display: 'none' }}></video>
+                <canvas ref={canvasRef} style={{ display: 'none' }} width="1500" height="1000"></canvas>
+                {receivedImage && <img style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain' }} src={receivedImage} alt="Received Frame" />}
+                <div style={{ backgroundColor: 'white'}}>
+                <h2>Objects Detected</h2>
+                <ul>
+                    {selectedImageDetectionNames && selectedImageDetectionNames.map((name, freq) => (
+                        <li>
+                            {name}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            </div>
+
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import cv2
+from collections import Counter
 from ultralytics import YOLO
 import supervision as sv
 from django.http import JsonResponse
@@ -22,10 +23,12 @@ class ObjectDetection:
         self.email_sent = False
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'        
         self.model = self.load_model()
-        self.CLASS_NAMES_DICT = self.model.model.names
         self.box_annotator = sv.BoxAnnotator(color=sv.ColorPalette.default(), thickness=3, text_thickness=1, text_scale=1, text_padding=2)
     
-
+    def getAllLabels(self):
+        labels = Labels.objects.all()
+        return dict([(label.id, label.name) for label in labels])
+    
     def load_model(self):
         model = YOLO("yolov8n.pt")  # load a pretrained YOLOv8n model
         model.fuse()
@@ -36,16 +39,16 @@ class ObjectDetection:
         return results
 
     def plot_bboxes(self, results, frame):
-        class_ids = []
         labels = list(results[0].names.values()) 
         detections = sv.Detections.from_ultralytics(results[0])
-        frame = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
-        return frame, class_ids
+        labels = self.getAllLabels()
+        frame, detection_names = self.box_annotator.annotate(scene=frame, detections=detections, labels=labels)
+        return frame, detection_names
     
     def detect_objects_in_image(self, image):
         results = self.predict(image)
-        annotated_image, _ = self.plot_bboxes(results, image)
-        return annotated_image
+        annotated_image, detection_names = self.plot_bboxes(results, image)
+        return annotated_image, detection_names
 
 @api_view(['POST'])
 def upload_image(request):
@@ -76,12 +79,13 @@ def detect_objects(request):
         img_bytes = base64.b64decode(base64_str)
         img_arr = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
-        annotated_image = detector.detect_objects_in_image(img)
+        annotated_image, detection_names = detector.detect_objects_in_image(img)
+        detection_names = list(Counter(detection_names).items())
         if annotated_image is None or annotated_image.size == 0:
             response_data.append({'image':img_base64, 'file_name': images_base64['file_name']})
         else:            
             _, buffer = cv2.imencode('.jpg', annotated_image)
-            response_data.append({'image': "data:image/png;base64," + base64.b64encode(buffer).decode('utf-8'), 'file_name': img_base64['file_name']})
+            response_data.append({'image': "data:image/png;base64," + base64.b64encode(buffer).decode('utf-8'), 'file_name': img_base64['file_name'], 'detection_names': detection_names})
 
     return JsonResponse({"annotated_images": response_data})
 
