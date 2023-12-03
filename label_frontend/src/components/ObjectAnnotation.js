@@ -31,7 +31,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import FolderIcon from '@mui/icons-material/Folder';
-
+import '../css/videostream.css'
 
 
 const ImageViewer = () => {
@@ -455,7 +455,7 @@ const handleDelete = (index) => {
         </Box>
          <button onClick={saveLabelsAndImages} style={{backgroundColor:  'ash', borderRadius: '5px'}}>save annotations</button>
          <button onClick={handleDownloadClick} style={{backgroundColor:  'violet', color: 'black', borderRadius: '2px'}}> Export Your Trained Model</button>
-        <div>
+        {/* <div>
           <h2>Objects Detected</h2>
           <ul>
             {selectedImageDetectionNames.map((name, freq) => (
@@ -464,8 +464,17 @@ const handleDelete = (index) => {
               </li>
             ))}
           </ul>
-        </div>
-
+        </div> */}
+        <div className="detected-objects">
+              <h3>Detected Objects and Frequencies</h3>
+              <ul>
+                  {selectedImageDetectionNames && selectedImageDetectionNames.map((name, index) => (
+                        <li>
+                        {name[0]}<span className="count-badge">{name[1]}</span>
+                    </li>
+                  ))}
+              </ul>
+          </div>
       {notification && <div className="notification">{notification}</div>}
         <div>
           <TypeAnimation

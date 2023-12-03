@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
+import '../css/videostream.css'
 
 const VideoWebSocket = () => {
     const videoRef = useRef(null);
@@ -77,16 +78,28 @@ const VideoWebSocket = () => {
                 <video ref={videoRef} style={{ display: 'none' }}></video>
                 <canvas ref={canvasRef} style={{ display: 'none' }} width="1500" height="1000"></canvas>
                 {receivedImage && <img style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain' }} src={receivedImage} alt="Received Frame" />}
-                <div style={{ backgroundColor: 'white'}}>
-                <h2>Objects Detected</h2>
-                <ul>
-                    {selectedImageDetectionNames && selectedImageDetectionNames.map((name, freq) => (
-                        <li>
-                            {name}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+                {/* <div>
+                    <h4 style={{ color: "whitesmoke" }}>Objects Detected</h4>
+                    <ul style={{color:"whitesmoke"}}>
+                        {selectedImageDetectionNames && selectedImageDetectionNames.map((name, freq) => (
+                            <li>
+                                {name[0]}
+                                <span>  {name[1]} </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div> */}
+
+                <div className="detected-objects">
+                    <h3>Detected Objects and Frequencies</h3>
+                    <ul>
+                        {selectedImageDetectionNames && selectedImageDetectionNames.map((name, index) => (
+                             <li>
+                             {name[0]}<span className="count-badge">{name[1]}</span>
+                         </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
 
         </div>
